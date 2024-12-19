@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(inter.className, "min-h-screen")}>
         <SidebarProvider>
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen w-full">
             <EmployeeSidebar />
             <main className="flex-1">
               <div className="p-4">

@@ -48,7 +48,7 @@ export function EmployeeTable() {
     const [expandedRow, setExpandedRow] = useState<string | null>(null)
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md">
             <Table>
                 <TableHeader>
                     <TableRow>

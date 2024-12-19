@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Search, Plus, LayoutGrid, List } from 'lucide-react'
 
-export default function EmployeesPage() {
+export default function Dashboard() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-8">
