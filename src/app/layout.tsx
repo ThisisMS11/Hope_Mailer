@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import Providers from '@/components/Providers'
-import { NavBar } from "@/components/Navbar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { EmployeeSidebar } from "@/components/EmployeeSideBar"
+import { cn } from "@/lib/utils"
+import { Inter } from 'next/font/google'
 import "./globals.css";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,19 +15,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <NavBar />
-          <div className="pt-[40px]">
-            {children}
+      <body className={cn(inter.className, "min-h-screen")}>
+        <SidebarProvider>
+          <div className="flex min-h-screen">
+            <EmployeeSidebar />
+            <main className="flex-1">
+              <div className="p-4">
+                <SidebarTrigger />
+                {children}
+              </div>
+            </main>
           </div>
-        </Providers>
+        </SidebarProvider>
       </body>
     </html>
-  );
+  )
 }

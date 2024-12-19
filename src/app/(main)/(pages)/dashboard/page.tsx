@@ -1,36 +1,59 @@
-'use client';
-import React, { useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
-import DashBoardCard from '@/components/Card';
-import DialogBox from '@/components/DialogBox';
+import { EmployeeTable } from "@/components/EmployeeTable"
+import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Search, Plus, LayoutGrid, List } from 'lucide-react'
 
-const DashBoard = () => {
-  const { data: session, status } = useSession();
-  const buttonref = useRef<HTMLButtonElement | null>(null);
-
-
-  useEffect(() => {
-    if (status === 'loading') {
-      console.log('Session is loading...');
-    } else if (status === 'authenticated') {
-      console.log("User is Authenticated.")
-      // console.log('Session data:', session);
-    } else {
-      console.log('Session status:', status);
-    }
-  }, [session, status]);
-
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-
-
+export default function EmployeesPage() {
   return (
-    <div className='flex items-center justify-center p-10'>
-      <DashBoardCard buttonRef={buttonref} />
-      <DialogBox buttonRef={buttonref} />
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-semibold text-teal-600">Employees</h1>
+      </div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex gap-2">
+          <Select defaultValue="all">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All categories</SelectItem>
+              <SelectItem value="design">Design</SelectItem>
+              <SelectItem value="development">Development</SelectItem>
+              <SelectItem value="management">Management</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              className="w-[300px] pl-9"
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="default" className="bg-teal-600 hover:bg-teal-700">
+            <Plus className="mr-2 h-4 w-4" />
+            Add employee
+          </Button>
+          <div className="flex items-center rounded-md border">
+            <Button variant="ghost" size="icon" className="rounded-r-none">
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="rounded-l-none border-l">
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+      <EmployeeTable />
     </div>
-  );
-};
+  )
+}
 
-export default DashBoard;
