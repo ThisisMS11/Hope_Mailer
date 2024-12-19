@@ -23,17 +23,17 @@ export {
     TableHeader,
     TableRow,
     TableHead,
-    TableBody,
+    TableBody,  
     TableCell,
 } from '@/components/ui/table';
 
 export {
     DropdownMenu,
-    DropdownMenuTrigger,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 
