@@ -9,24 +9,27 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
-    SidebarTrigger,
+    SidebarGroupLabel,
+    SidebarGroupContent,
+    useSidebar
 } from "@/components/ui/sidebar"
 
 export function EmployeeSidebar() {
+
+    const { open } = useSidebar()
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
-                <div className="flex items-center justify-between px-4 py-2">
+                <div className="flex items-center justify-between pt-2 pr-1">
                     <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-md bg-teal-600 text-white grid place-items-center">
                             W
                         </div>
-                        <span className="font-semibold">Workplace</span>
+                        {open && <span className="font-semibold hidden lg:inline">Workplace</span>} {/* Add this line */}
                     </div>
-                    <SidebarTrigger />
                 </div>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarGroupContent>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton tooltip="Dashboard">
@@ -59,9 +62,8 @@ export function EmployeeSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
-            </SidebarContent>
+            </SidebarGroupContent>
             <SidebarRail />
         </Sidebar>
     )
 }
-
