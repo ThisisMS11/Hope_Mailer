@@ -18,122 +18,21 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Calendar } from "@/components/ui/calendar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { format } from "date-fns"
-import { ChevronDown, Pencil } from 'lucide-react'
-
-// Sample data
-const employees = [
-    {
-        id: "163",
-        name: "Selivanova Vera",
-        position: "Designer",
-        company: "Google",
-        email: "selivanova.vera@gmail.com",
-        phone: "+375(29)298-44-44",
-        status: "Valid",
-        experience: "3 years"
-    },
-    {
-        id: "164",
-        name: "John Doe",
-        position: "Software Engineer",
-        company: "Microsoft",
-        email: "john.doe@microsoft.com",
-        phone: "+1(555)123-4567",
-        status: "Valid",
-        experience: "5 years"
-    },
-    {
-        id: "165",
-        name: "Alicia Park",
-        position: "Project Manager",
-        company: "Amazon",
-        email: "alicia.park@amazon.com",
-        phone: "+1(555)987-6543",
-        status: "Valid",
-        experience: "7 years"
-    },
-    {
-        id: "166",
-        name: "Michael Smith",
-        position: "Marketing Specialist",
-        company: "Facebook",
-        email: "michael.smith@facebook.com",
-        phone: "+44(20)7946-0958",
-        status: "Valid",
-        experience: "4 years"
-    },
-    {
-        id: "167",
-        name: "Emma Williams",
-        position: "Product Designer",
-        company: "Apple",
-        email: "emma.williams@apple.com",
-        phone: "+1(555)555-1212",
-        status: "Valid",
-        experience: "6 years"
-    },
-    {
-        id: "168",
-        name: "David Johnson",
-        position: "Software Developer",
-        company: "IBM",
-        email: "david.johnson@ibm.com",
-        phone: "+49(0)171-123-4567",
-        status: "Valid",
-        experience: "2 years"
-    },
-    {
-        id: "169",
-        name: "Sophia Brown",
-        position: "UI/UX Designer",
-        company: "Adobe",
-        email: "sophia.brown@adobe.com",
-        phone: "+1(555)432-7654",
-        status: "Valid",
-        experience: "3 years"
-    },
-    {
-        id: "170",
-        name: "Lucas Miller",
-        position: "Data Analyst",
-        company: "Netflix",
-        email: "lucas.miller@netflix.com",
-        phone: "+33(0)1-234-5678",
-        status: "Valid",
-        experience: "5 years"
-    },
-    {
-        id: "171",
-        name: "Olivia Taylor",
-        position: "HR Manager",
-        company: "Spotify",
-        email: "olivia.taylor@spotify.com",
-        phone: "+34(0)912-345-678",
-        status: "Valid",
-        experience: "8 years"
-    },
-    {
-        id: "172",
-        name: "James Anderson",
-        position: "Full Stack Developer",
-        company: "Twitter",
-        email: "james.anderson@twitter.com",
-        phone: "+1(555)678-9876",
-        status: "Valid",
-        experience: "4 years"
-    }
-];
+import { Pencil } from 'lucide-react'
 
 
-export function EmployeeTable() {
-    const [expandedRow, setExpandedRow] = useState<string | null>(null)
+export function EmployeeTable({ employees, setSelectedEmployees }: { employees: any, setSelectedEmployees: React.Dispatch<React.SetStateAction<any[]>>; }) {
+    const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+    const handleCheckboxChange = (employee: any, isChecked: boolean) => {
+        setSelectedEmployees((prevSelected) => {
+            if (isChecked) {
+                return [...prevSelected, employee];
+            } else {
+                return prevSelected.filter((e) => e.id !== employee.id);
+            }
+        });
+    };
 
     return (
         <div className="rounded-md">
@@ -151,11 +50,17 @@ export function EmployeeTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {employees.map((employee) => (
+                    {employees.map((employee: any) => (
                         <>
                             <TableRow key={employee.id}>
                                 <TableCell>
-                                    <input type="checkbox" className="rounded border-gray-300" />
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-gray-300"
+                                        onChange={(e) =>
+                                            handleCheckboxChange(employee, e.target.checked)
+                                        }
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <div>
