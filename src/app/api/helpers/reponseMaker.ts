@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export const makeResponse = (
   statusCode: number,
   success: boolean,
   message: string,
-  data: any
+  data: any,
 ) => {
   return NextResponse.json(
     {
@@ -14,6 +14,6 @@ export const makeResponse = (
     },
     {
       status: statusCode,
-    }
+    },
   );
 };
