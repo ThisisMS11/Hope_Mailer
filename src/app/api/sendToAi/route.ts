@@ -65,6 +65,8 @@ export const POST = async (req: NextRequest) => {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const prompt = constructPrompt(optionSelected, jobDescription, emailTemplate);
+        logger.info(`Generated Prompt : ${prompt}`);
+
         const resume = {
             inlineData: {
                 data: resumeBase64,
@@ -76,10 +78,7 @@ export const POST = async (req: NextRequest) => {
         logger.info('Sending request to Google Gemini API.');
         try {
             const result = await model.generateContent([prompt,resume]);
-
             const responseText = result.response.text();
-            logger.info(`responseText : ${responseText}`)
-
 
             logger.info('Successfully received response from Google Gemini API.');
 

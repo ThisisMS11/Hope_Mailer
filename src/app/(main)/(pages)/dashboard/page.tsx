@@ -12,7 +12,7 @@ import {
 } from "@/imports/Shadcn_imports"
 import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from 'lucide-react'
 import FilterCheckBox from "@/components/FilterCheckBox"
-import EmailWorkflow from "@/components/something"
+import EmailWorkflow from "@/components/EmailWorkflow"
 
 // Sample data
 const employees = [
