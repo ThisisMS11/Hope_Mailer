@@ -10,6 +10,7 @@ import {
   Clock,
   Linkedin,
   MapPin,
+  Repeat,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -32,6 +38,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "axios";
+import { useRef } from "react";
 
 const DialogBox = ({
   buttonRef,
@@ -39,23 +47,26 @@ const DialogBox = ({
   buttonRef: React.RefObject<HTMLButtonElement>;
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     position: "",
     company: "",
     email: "",
-    phone_no: "",
-    experience: "",
-    linkedInId: "",
+    gender: "",
+    mobile: "",
+    experience: 0,
+    linkedIn: "",
     location: "",
   });
 
   const [loading, setLoading] = useState(false);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === "number" ? parseFloat(value) || 0 : value,
     }));
   };
 
@@ -65,11 +76,24 @@ const DialogBox = ({
       position: value,
     }));
   };
+  const handleGenderChange = (value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      gender: value,
+    }));
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    // Simulate a request or call a function to add user to the database
-    console.log(formData);
+    try {
+      const url = `${process.env.NEXT_PUBLIC_URL}/api/contacts`;
+      const response = await axios.post(url, formData);
+      console.log(response.data);
+    } catch (error) {
+      console.error(`Some error happened while creating employee : ${error}`);
+    }
+    setLoading(false);
+    if (closeRef.current) closeRef.current.click();
   };
 
   return (
@@ -101,22 +125,34 @@ const DialogBox = ({
                   <div className="flex items-center space-x-4">
                     <User className="text-gray-500" />
                     <div className="flex-1">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="firstName">First Name</Label>
                       <Input
-                        id="name"
-                        placeholder="Enter name"
-                        name="name"
-                        value={formData.name}
+                        id="firstName"
+                        placeholder="Enter first name"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        placeholder="Enter last name"
+                        name="lastName"
+                        value={formData.lastName}
                         onChange={handleChange}
                       />
                     </div>
                   </div>
+
                   <div className="flex items-center space-x-4">
                     <Mail className="text-gray-500" />
                     <div className="flex-1">
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
+                        type="email"
                         placeholder="Enter email"
                         name="email"
                         value={formData.email}
@@ -127,14 +163,35 @@ const DialogBox = ({
                   <div className="flex items-center space-x-4">
                     <Phone className="text-gray-500" />
                     <div className="flex-1">
-                      <Label htmlFor="phone_no">Phone Number</Label>
+                      <Label htmlFor="mobile">Phone Number</Label>
                       <Input
-                        id="phone_no"
+                        id="mobile"
+                        type="number"
                         placeholder="Enter phone number"
-                        name="phone_no"
-                        value={formData.phone_no}
+                        name="mobile"
+                        value={formData.mobile}
                         onChange={handleChange}
                       />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Repeat className="text-gray-500" />
+                    <div className="flex-1">
+                      <Label htmlFor="position">Gender</Label>
+                      <Select
+                        onValueChange={handleGenderChange}
+                        defaultValue=""
+                        value={formData.gender}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="not_know">not_know</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -161,6 +218,7 @@ const DialogBox = ({
                       <Select
                         onValueChange={handlePositionChange}
                         defaultValue=""
+                        value={formData.position}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select position" />
@@ -194,6 +252,7 @@ const DialogBox = ({
                       <Label htmlFor="experience">Experience</Label>
                       <Input
                         id="experience"
+                        type="number"
                         placeholder="Enter experience (e.g., 3 years)"
                         name="experience"
                         value={formData.experience}
@@ -204,12 +263,12 @@ const DialogBox = ({
                   <div className="flex items-center space-x-4">
                     <Linkedin className="text-gray-500" />
                     <div className="flex-1">
-                      <Label htmlFor="linkedInId">LinkedIn ID</Label>
+                      <Label htmlFor="linkedIn">LinkedIn ID</Label>
                       <Input
-                        id="linkedInId"
+                        id="linkedIn"
                         placeholder="Enter LinkedIn ID"
-                        name="linkedInId"
-                        value={formData.linkedInId}
+                        name="linkedIn"
+                        value={formData.linkedIn}
                         onChange={handleChange}
                       />
                     </div>
@@ -231,6 +290,12 @@ const DialogBox = ({
             )}
           </CardFooter>
         </Card>
+
+        <DialogClose asChild className="hidden">
+          <Button type="button" variant="secondary" ref={closeRef}>
+            Close
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );

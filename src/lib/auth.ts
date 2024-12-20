@@ -14,8 +14,8 @@ export const authOptions: AuthOptions = {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: 'code',
-          scope :'openid profile email'
+          response_type: "code",
+          scope: "openid profile email",
         },
       },
     }),
