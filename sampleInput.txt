@@ -1,0 +1,62 @@
+Job Description:
+"""
+About the job
+Skills:
+HTML, CSS, JavaScript, Responsive Design, Version Control (Git), Frontend Frameworks (e.g. React, Angular), Backend Development (e.g. Node.js, Python), Problem Solving,
+
+Job Overview
+
+TwiLearn is seeking a motivated Web Development Intern to join our dynamic team. This internship position is designed for fresh graduates with a passion for web development, offering remote work flexibility across multiple locations including Pune, Mumbai, Bangalore, Chennai, Noida, Hyderabad, and Kolkata. As an intern, you will gain hands-on experience in web development projects, contributing to the creation and optimization of innovative digital solutions.
+
+Qualifications And Skills
+
+Proficiency in HTML, CSS, and JavaScript (Mandatory skill).
+Experience with responsive design techniques to ensure web compatibility across various devices.
+Understanding of version control systems such as Git for effective code management.
+Exposure to frontend frameworks like React or Angular for efficient UI development.
+Basic knowledge of backend development technologies such as Node.js or Python.
+Strong problem-solving abilities to address technical challenges efficiently.
+Ability to work collaboratively in a remote environment and adapt to new tools.
+Eagerness to learn and innovate within a fast-paced e-learning industry.
+
+Roles And Responsibilities
+
+Assist in designing, developing, and maintaining web applications alongside senior developers.
+Participate in the implementation of user-friendly interfaces using modern web technologies.
+Collaborate with cross-functional teams to gather requirements and propose technical solutions.
+Contribute to code reviews and provide feedback to improve code quality and performance.
+Help in troubleshooting and debugging issues, ensuring responsive and reliable applications.
+Document development processes, issues, and resolutions for future reference.
+Engage in continuous learning and improvement of skills through active participation in team activities.
+
+
+Desired Skills and Experience
+HTML, CSS, JavaScript, Responsive Design, Version Control (Git), Frontend Frameworks (e.g. React, Angular), Backend Development (e.g. Node.js, Python), Problem Solving
+"""
+
+
+
+Email Template : 
+"""
+Dear Mr.Garg,
+
+My name is Mohit Saini and I am a final-year Computer Science student at IIIT Jabalpur, specializing in backend Technologies with experience across JavaScript, Python, Django, PostgreSQL, MERN stack, Docker, Linux, and AWS. I'm also skilled in SQL, C++, Golang, and have a strong aptitude for problem-solving.
+
+I'm reaching out to you today because I'm interested in the Intern role at Delhivery. Given your valuable experience there as a Senior SDE, I would greatly value your support in referring me for the position or connecting me with the HR team if you feel my profile aligns well with the requirements.
+
+Your support would mean a lot to someone eager to start their journey in tech.
+
+I've attached my resume for you to look over. I'm happy to share any additional details if needed.
+
+Resume Link
+
+Internship Link
+
+Best regards,
+Mohit Saini
+Final Year B.Tech, Computer Science
+Indian Institute of Information Technology, Jabalpur
+📧 mohitforwork2002@gmail.com
+📱 +91 9680453581
+GitHub: ThisisMS11 | LinkedIn: Mohit Saini | LeetCode: ThisisMS11
+""""

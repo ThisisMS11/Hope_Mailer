@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { Button, Textarea, Label, Input } from '@/imports/Shadcn_imports'
-import { CircleX } from 'lucide-react'
+import { Button, Textarea, Label, Input } from '@/imports/Shadcn_imports'; // Assuming Spinner is available in the imports
+import { CircleX, Loader } from 'lucide-react';
+import axios from 'axios';
 
 const EmailWorkflow = ({ isModalOpen, setIsModalOpen }: { isModalOpen: Boolean, setIsModalOpen: any }) => {
-    const [currentStep, setCurrentStep] = useState(0); // 0: Initial, 1: Job Desc, 2: Resume, 3: Template
+    const [currentStep, setCurrentStep] = useState(0);
     const [selectedOption, setSelectedOption] = useState<"referral" | "followup" | null>(null);
 
     // State variables for collecting input
     const [jobDescription, setJobDescription] = useState("");
     const [resumeFile, setResumeFile] = useState<File | null>(null);
     const [emailTemplate, setEmailTemplate] = useState("");
+    const [contentLoading, setContentLoading] = useState(false);
+    const [emailContent, setEmailContent] = useState<string>("");
 
     const handleStart = () => setIsModalOpen(true);
+
     const handleOptionSelect = (option: "referral" | "followup") => {
         setSelectedOption(option);
         setCurrentStep(1);
@@ -20,31 +24,54 @@ const EmailWorkflow = ({ isModalOpen, setIsModalOpen }: { isModalOpen: Boolean, 
     const handleNextStep = () => setCurrentStep((prev) => prev + 1);
     const handleBackStep = () => setCurrentStep((prev) => prev - 1);
 
-    const handleSubmit = () => {
-        console.log("Selected Option:", selectedOption);
-        console.log("Job Description:", jobDescription);
-        console.log("Resume File:", resumeFile);
-        console.log("Email Template:", emailTemplate);
-        alert("Check console for collected data!");
-        setIsModalOpen(false);
+    const handleSubmit = async () => {
+        setContentLoading(true); // Show loader
+        try {
+            const formData = new FormData();
+            formData.append("optionSelected", selectedOption || "");
+            formData.append("jobDescription", jobDescription);
+            if (resumeFile) {
+                formData.append("resume", resumeFile);
+            }
+            formData.append("emailTemplate", emailTemplate);
+
+            const url = `${process.env.NEXT_PUBLIC_URL}/api/sendToAi`;
+            const response = await axios.post(url, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            setEmailContent(response.data.data); // Populate the textarea
+            setCurrentStep(4); // Move to step 4 after fetching
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
+        setContentLoading(false); // Hide loader
     };
 
     const handleModalClose = () => {
         setIsModalOpen(false);
-    }
+    };
 
     return (
         <>
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-
                     <div className="bg-white rounded-lg p-6 w-full max-w-lg">
                         <CircleX className="text-gray-500 mb-4 cursor-pointer" onClick={handleModalClose} />
+
+                        {contentLoading && (
+                            <div className="flex justify-center items-center mb-4">
+                                <Loader className="w-6 h-6 text-blue-500 animate-spin" />
+                                <span className="ml-2 text-gray-500">Loading...</span>
+                            </div>
+                        )}
+
                         {/* Step-Based Rendering */}
                         {currentStep === 0 && (
                             <div>
                                 <h2 className="text-xl font-bold mb-4">Select an Option</h2>
-
                                 <div className="flex flex-col space-y-4">
                                     <Button onClick={() => handleOptionSelect("referral")}>Ask for Referral</Button>
                                     <Button onClick={() => handleOptionSelect("followup")}>Follow-up with Manager</Button>
@@ -70,10 +97,11 @@ const EmailWorkflow = ({ isModalOpen, setIsModalOpen }: { isModalOpen: Boolean, 
 
                         {currentStep === 2 && (
                             <div>
-                                <Label htmlFor="picture" className="mb-2">Resume</Label>
+                                <Label htmlFor="resume" className="mb-2">Resume</Label>
                                 <Input
-                                    id="picture"
+                                    id="resume"
                                     type="file"
+                                    accept=".pdf,.doc,.docx"
                                     onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
                                 />
                                 <div className="flex justify-between mt-4">
@@ -95,6 +123,22 @@ const EmailWorkflow = ({ isModalOpen, setIsModalOpen }: { isModalOpen: Boolean, 
                                 <div className="flex justify-between mt-4">
                                     <Button onClick={handleBackStep}>Back</Button>
                                     <Button onClick={handleSubmit}>Submit</Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentStep === 4 && (
+                            <div>
+                                <h2 className="text-xl font-bold mb-4">Generated Email Content</h2>
+                                <Textarea
+                                    className="w-full border rounded p-2"
+                                    placeholder="Generated Email Content will appear here..."
+                                    value={emailContent}
+                                    onChange={(e) => setEmailContent(e.target.value)}
+                                />
+                                <div className="flex justify-between mt-4">
+                                    <Button onClick={handleBackStep}>Back</Button>
+                                    <Button onClick={handleSubmit}>Retry</Button>
                                 </div>
                             </div>
                         )}

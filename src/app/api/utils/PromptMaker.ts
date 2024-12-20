@@ -7,32 +7,36 @@
  */
 function constructPrompt(optionSelected: string, jobDescription: string, emailTemplate: string) {
     return `
-        You are a professional AI assistant tasked with drafting a cold email.
-        
+        You are a professional AI assistant tasked with drafting a highly personalized and professional cold email.
+
         Context:
         - Job Description: ${jobDescription}
-        - Email Template: ${emailTemplate}
+        - Email Template (provided): ${emailTemplate}
         - Purpose: ${optionSelected}
 
-        Requirements:
-        - Most important requirement is that the generated text should not appear ai generated at any cost. i have given  you a email Template.
-        - Personalize the email according to the job description by talking my relevant experiences from the resume.
-        - Highlight the key strengths and skills relevant to the option selected using my attached resume.
-        - Keep the tone professional yet engaging.
-        - Keep the length of the text not more than the emailTemplate (very important)
+        Key Requirements:
+        - Use the email template as a foundation but enhance it with personalization and relevance.
+        - Ensure the text feels natural and human-written, avoiding AI-generated tone at all costs.
+        - Highlight my experiences and skills relevant to the job description and the selected purpose by leveraging my resume.
+        - Limit the word count to 140 words while maintaining clarity and impact.
+        - Exclude any footer starting from "Thank you for your time and consideration."
 
-        Instructions:
-        1. Start with an engaging subject line.
-        2. Use the provided template as a base.
-        3. Ensure the content aligns with the job description and is succinct.
-        4. Structure the email as:
-           - Subject Line
-           - Opening Greeting
-           - Body: Highlight key skills/experiences
-           - Closing with a Call to Action
+        Specific Instructions:
+        1. Craft an engaging subject line tailored to the context.
+        2. Begin with a warm and professional greeting.
+        3. Use the body to emphasize my top skills and experiences that align with the job description.
+        4. Personalize the email to the role and purpose while keeping it professional and compelling.
+        5. Close with a clear call to action, avoiding generic phrases.
+
+        Final Email Structure:
+        - Subject Line
+        - Opening Greeting
+        - Body: Key skills/experiences and relevance
+        - Closing: Call to Action
 
         Generate the email content accordingly.
     `;
 }
+
 
 export { constructPrompt };
