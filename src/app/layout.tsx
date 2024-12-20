@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { EmployeeSidebar } from "@/components/EmployeeSideBar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { EmployeeSidebar } from "@/components/EmployeeSideBar";
 import ThemeToggler from "@/components/ThemeToggler";
-import { cn } from "@/lib/utils"
-import { Inter } from 'next/font/google'
+import { cn } from "@/lib/utils";
+import { Inter } from "next/font/google";
 import "./globals.css";
-
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -37,5 +36,5 @@ export default function RootLayout({
         </SidebarProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -2,10 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
-
-
   :root {
     --background: 175 22% 95%;
     --foreground: 175 5% 10%;
@@ -38,7 +35,7 @@
     --popover-foreground: 175 5% 91%;
     --primary: 175 83.9% 31.6%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 175 22% 20%; 
+    --secondary: 175 22% 20%;
     --secondary-foreground: 0 0% 100%;
     --muted: 137 22% 25%;
     --muted-foreground: 175 5% 65%;
@@ -51,8 +48,6 @@
     --ring: 175 83.9% 31.6%;
     --radius: 0.75rem;
   }
-
-
 }
 
 @layer base {

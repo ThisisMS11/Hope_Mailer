@@ -5,8 +5,12 @@
  * @param {string} emailTemplate - The email template provided by the user.
  * @returns {string} - The generated prompt.
  */
-function constructPrompt(optionSelected: string, jobDescription: string, emailTemplate: string) {
-    return `
+function constructPrompt(
+  optionSelected: string,
+  jobDescription: string,
+  emailTemplate: string,
+) {
+  return `
         You are a professional AI assistant tasked with drafting a highly personalized and professional cold email.
 
         Context:
@@ -37,6 +41,5 @@ function constructPrompt(optionSelected: string, jobDescription: string, emailTe
         Generate the email content accordingly.
     `;
 }
-
 
 export { constructPrompt };

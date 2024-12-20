@@ -1,18 +1,18 @@
-'use client'
-import { EmployeeTable } from "@/components/EmployeeTable"
-import AddEmployeeDialog from "@/components/AddEmployeeDialog"
-import { Button } from "@/components/ui/button"
-import { useRef, useState } from "react"
+"use client";
+import { EmployeeTable } from "@/components/EmployeeTable";
+import AddEmployeeDialog from "@/components/AddEmployeeDialog";
+import { Button } from "@/components/ui/button";
+import { useRef, useState } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/imports/Shadcn_imports"
-import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from 'lucide-react'
-import FilterCheckBox from "@/components/FilterCheckBox"
-import EmailWorkflow from "@/components/EmailWorkflow"
+} from "@/imports/Shadcn_imports";
+import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from "lucide-react";
+import FilterCheckBox from "@/components/FilterCheckBox";
+import EmailWorkflow from "@/components/EmailWorkflow";
 
 // Sample data
 const employees = [
@@ -24,7 +24,7 @@ const employees = [
     email: "selivanova.vera@gmail.com",
     phone: "+375(29)298-44-44",
     status: "Valid",
-    experience: "3 years"
+    experience: "3 years",
   },
   {
     id: "164",
@@ -34,7 +34,7 @@ const employees = [
     email: "john.doe@microsoft.com",
     phone: "+1(555)123-4567",
     status: "Valid",
-    experience: "5 years"
+    experience: "5 years",
   },
   {
     id: "165",
@@ -44,7 +44,7 @@ const employees = [
     email: "alicia.park@amazon.com",
     phone: "+1(555)987-6543",
     status: "Valid",
-    experience: "7 years"
+    experience: "7 years",
   },
   {
     id: "166",
@@ -54,7 +54,7 @@ const employees = [
     email: "michael.smith@facebook.com",
     phone: "+44(20)7946-0958",
     status: "Valid",
-    experience: "4 years"
+    experience: "4 years",
   },
   {
     id: "167",
@@ -64,7 +64,7 @@ const employees = [
     email: "emma.williams@apple.com",
     phone: "+1(555)555-1212",
     status: "Valid",
-    experience: "6 years"
+    experience: "6 years",
   },
   {
     id: "168",
@@ -74,7 +74,7 @@ const employees = [
     email: "david.johnson@ibm.com",
     phone: "+49(0)171-123-4567",
     status: "Valid",
-    experience: "2 years"
+    experience: "2 years",
   },
   {
     id: "169",
@@ -84,7 +84,7 @@ const employees = [
     email: "sophia.brown@adobe.com",
     phone: "+1(555)432-7654",
     status: "Valid",
-    experience: "3 years"
+    experience: "3 years",
   },
   {
     id: "170",
@@ -94,7 +94,7 @@ const employees = [
     email: "lucas.miller@netflix.com",
     phone: "+33(0)1-234-5678",
     status: "Valid",
-    experience: "5 years"
+    experience: "5 years",
   },
   {
     id: "171",
@@ -104,7 +104,7 @@ const employees = [
     email: "olivia.taylor@spotify.com",
     phone: "+34(0)912-345-678",
     status: "Valid",
-    experience: "8 years"
+    experience: "8 years",
   },
   {
     id: "172",
@@ -114,8 +114,8 @@ const employees = [
     email: "james.anderson@twitter.com",
     phone: "+1(555)678-9876",
     status: "Valid",
-    experience: "4 years"
-  }
+    experience: "4 years",
+  },
 ];
 
 const companies = [
@@ -131,7 +131,6 @@ const companies = [
   "Salesforce",
 ];
 
-
 const positions = [
   "Manager",
   "Senior SDE",
@@ -141,9 +140,6 @@ const positions = [
   "HR",
   "Head",
 ];
-
-
-
 
 export default function Dashboard() {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -155,12 +151,14 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleFilter = () => {
-    console.log({ selectedCompanies, selectedPositions })
+    console.log({ selectedCompanies, selectedPositions });
     const filtered = employees.filter((employee: any) => {
       const matchesPosition =
-        selectedPositions.length === 0 || selectedPositions.includes(employee.position);
+        selectedPositions.length === 0 ||
+        selectedPositions.includes(employee.position);
       const matchesCompany =
-        selectedCompanies.length === 0 || selectedCompanies.includes(employee.company);
+        selectedCompanies.length === 0 ||
+        selectedCompanies.includes(employee.company);
       const isValid = employee.status === "Valid";
       return matchesPosition && matchesCompany && isValid;
     });
@@ -174,15 +172,15 @@ export default function Dashboard() {
   };
 
   const handleColdEmailing = () => {
-    setIsModalOpen(true)
+    setIsModalOpen(true);
     console.log({ selectedEmployees });
-  }
+  };
 
   const openAddEmployeeDialog = () => {
     if (buttonRef.current) {
       buttonRef.current.click();
     }
-  }
+  };
   return (
     <>
       <div className="p-6">
@@ -191,27 +189,47 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-2">
+            <FilterCheckBox
+              filterName="Companies"
+              selectedItems={selectedCompanies}
+              setSelectItems={setSelectedCompanies}
+              list={companies}
+            />
 
-            <FilterCheckBox filterName="Companies" selectedItems={selectedCompanies} setSelectItems={setSelectedCompanies} list={companies} />
+            <FilterCheckBox
+              filterName="Positions"
+              selectedItems={selectedPositions}
+              setSelectItems={setSelectedPositions}
+              list={positions}
+            />
 
-            <FilterCheckBox filterName="Positions" selectedItems={selectedPositions} setSelectItems={setSelectedPositions} list={positions} />
-
-
-            <Button onClick={handleFilter} className="bg-teal-600 hover:bg-teal-700">
+            <Button
+              onClick={handleFilter}
+              className="bg-teal-600 hover:bg-teal-700"
+            >
               Apply Filters <Filter />
             </Button>
 
-            <Button onClick={handleResetFilters} className="bg-teal-600 hover:bg-teal-700">
+            <Button
+              onClick={handleResetFilters}
+              className="bg-teal-600 hover:bg-teal-700"
+            >
               Reset Filters <RotateCw />
             </Button>
 
-            <Button onClick={handleColdEmailing} className="bg-teal-600 hover:bg-teal-700">
+            <Button
+              onClick={handleColdEmailing}
+              className="bg-teal-600 hover:bg-teal-700"
+            >
               Start Cold Emailing <Mails />
             </Button>
-
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="default" className="bg-teal-600 hover:bg-teal-700" onClick={openAddEmployeeDialog}>
+            <Button
+              variant="default"
+              className="bg-teal-600 hover:bg-teal-700"
+              onClick={openAddEmployeeDialog}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add employee
             </Button>
@@ -219,19 +237,28 @@ export default function Dashboard() {
               <Button variant="ghost" size="icon" className="rounded-r-none">
                 <LayoutGrid className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-l-none border-l">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-l-none border-l"
+              >
                 <List className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
-        <EmployeeTable employees={filteredEmployees} setSelectedEmployees={setSelectedEmployees} />
+        <EmployeeTable
+          employees={filteredEmployees}
+          setSelectedEmployees={setSelectedEmployees}
+        />
 
         <AddEmployeeDialog buttonRef={buttonRef} />
       </div>
 
-      <EmailWorkflow isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      <EmailWorkflow
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </>
-  )
+  );
 }
-
