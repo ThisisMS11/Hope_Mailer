@@ -59,6 +59,11 @@ const EmailWorkflow = ({
   };
 
   const handleModalClose = () => {
+    setJobDescription("");
+    setEmailTemplate("");
+    setResumeFile(null);
+    setEmailContent("");
+    setCurrentStep(0);
     setIsModalOpen(false);
   };
 
