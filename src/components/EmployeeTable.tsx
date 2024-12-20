@@ -49,7 +49,7 @@ export function EmployeeTable({
             <TableHead>Position</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Mobile Number</TableHead>
-            <TableHead>E-mail / Mobile</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>LinkedIn</TableHead>
             <TableHead>Status</TableHead>
@@ -126,13 +126,13 @@ export function EmployeeTable({
                           <label className="text-sm text-muted-foreground">
                             Surname
                           </label>
-                          <Input defaultValue={employee.name.split(" ")[0]} />
+                          <Input defaultValue={employee.lastName} />
                         </div>
                         <div>
                           <label className="text-sm text-muted-foreground">
                             Name
                           </label>
-                          <Input defaultValue={employee.name.split(" ")[1]} />
+                          <Input defaultValue={employee.firstName} />
                         </div>
                       </div>
                       <div className="space-y-4">

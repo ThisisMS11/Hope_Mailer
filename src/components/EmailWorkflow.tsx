@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Textarea, Label, Input } from "@/imports/Shadcn_imports"; // Assuming Spinner is available in the imports
 import { CircleX, Loader } from "lucide-react";
 import axios from "axios";
-
+import { extractSubject } from "@/utils/UtilFunctions";
 const EmailWorkflow = ({
   isModalOpen,
   setIsModalOpen,
@@ -21,6 +21,8 @@ const EmailWorkflow = ({
   const [emailTemplate, setEmailTemplate] = useState("");
   const [contentLoading, setContentLoading] = useState(false);
   const [emailContent, setEmailContent] = useState<string>("");
+  const [finalSubject, setFinalSubject] = useState<string>("");
+
 
   const handleStart = () => setIsModalOpen(true);
 
@@ -50,6 +52,11 @@ const EmailWorkflow = ({
         },
       });
 
+      // console.info(`data : ${response.data.data}`)
+
+      const generated_body = response.data.data
+      setFinalSubject(extractSubject(generated_body));
+
       setEmailContent(response.data.data); // Populate the textarea
       setCurrentStep(4); // Move to step 4 after fetching
     } catch (error) {
@@ -66,6 +73,10 @@ const EmailWorkflow = ({
     setCurrentStep(0);
     setIsModalOpen(false);
   };
+
+  const handleStartMailing = () => {
+    return;
+  }
 
   return (
     <>
@@ -166,7 +177,44 @@ const EmailWorkflow = ({
                 />
                 <div className="flex justify-between mt-4">
                   <Button onClick={handleBackStep}>Back</Button>
-                  <Button onClick={handleSubmit}>Retry</Button>
+                  <div >
+                    <Button className='mr-4' onClick={handleSubmit}>Retry</Button>
+                    <Button onClick={handleNextStep}>Next</Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 5 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">
+                  Mark Your Variables
+                </h2>
+
+                <Label htmlFor="finalSubject" className="mb-2">
+                  Subject
+                </Label>
+                <Input
+                  id="finalSubject"
+                  name="finalSubject"
+                  type="text"
+                  value={finalSubject}
+                  onChange={(e) => setFinalSubject(e.target.value)}
+                />
+
+                <Label htmlFor="EditingFinalContent" className="my-4">
+                  Edit Content for final Email Body
+                </Label>
+                <Textarea
+                  name="EditingFinalContent"
+                  className="w-full border rounded p-2"
+                  placeholder="Generated Email Content will appear here..."
+                  value={emailContent}
+                  onChange={(e) => setEmailContent(e.target.value)}
+                />
+                <div className="flex justify-between mt-4">
+                  <Button onClick={handleBackStep}>Back</Button>
+                  <Button onClick={handleSubmit}>Start Mailing</Button>
                 </div>
               </div>
             )}
