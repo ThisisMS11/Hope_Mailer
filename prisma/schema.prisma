@@ -55,7 +55,35 @@ model User {
   admin         Boolean       @default(false)
   accounts      Account[]
   sessions      Session[]
+  contacts      Contact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+enum Gender {
+  male
+  female
+  not_know
+}
+
+
+model Contact {
+  id            String        @id @default(cuid())
+  firstName  String
+  lastName   String
+  gender     Gender
+  mobile     String
+  linkedIn   String?
+  email      String   @unique
+  company    String
+  position   String
+  experience Int
+  valid      Boolean   @default(true)
+  userId     String      
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

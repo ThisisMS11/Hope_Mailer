@@ -14,6 +14,8 @@ export const authOptions: AuthOptions = {
         params: {
           prompt: "consent",
           access_type: "offline",
+          response_type: 'code',
+          scope :'openid profile email'
         },
       },
     }),
@@ -31,9 +33,10 @@ export const authOptions: AuthOptions = {
       // When a new user logs in, add custom properties to the token
       if (account && profile) {
         token.access_token = account.access_token;
-        token.id = account.userId;
-        token.username = profile.name;
+        token.refresh_token = account.refresh_token; // Ensure this is mapped
         token.expires_at = account.expires_at;
+        token.id = account.userId || profile.id; // Explicitly map user ID
+        token.username = profile.name;
         return token;
       } else if (Date.now() < token.expires_at * 1000) {
         // If the access token has not expired yet, return it
@@ -74,9 +77,12 @@ export const authOptions: AuthOptions = {
       /* configuring the session object before sending it to the client */
       if (token) {
         session.access_token = token.access_token;
-        session.user.id = token.sub;
-        session.user.username = token.username;
         session.expires_at = token.expires_at;
+        session.user = {
+          ...session.user,
+          id: token.id, // Use `token.id` explicitly
+          username: token.username,
+        };
 
         const user = await prisma.user.findUnique({
           where: { id: token.sub },
