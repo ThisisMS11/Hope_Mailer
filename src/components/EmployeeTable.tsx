@@ -50,6 +50,8 @@ export function EmployeeTable({
             <TableHead>Company</TableHead>
             <TableHead>Mobile Number</TableHead>
             <TableHead>E-mail / Mobile</TableHead>
+            <TableHead>Gender</TableHead>
+            <TableHead>LinkedIn</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
@@ -70,7 +72,7 @@ export function EmployeeTable({
                 <TableCell>
                   <div>
                     <div className="font-medium text-teal-600">
-                      {employee.name}
+                      {employee.firstName + " " + employee.lastName}
                     </div>
                   </div>
                 </TableCell>
@@ -78,7 +80,7 @@ export function EmployeeTable({
                   <div>
                     <div>{employee.position}</div>
                     <div className="text-sm text-muted-foreground">
-                      {employee.experience}
+                      {employee.experience + "years"}
                     </div>
                   </div>
                 </TableCell>
@@ -87,13 +89,18 @@ export function EmployeeTable({
                     <div>{employee.company}</div>
                   </div>
                 </TableCell>
-                <TableCell>{employee.phone}</TableCell>
+                <TableCell>{employee.mobile}</TableCell>
                 <TableCell>
                   <div>
                     <div>{employee.email}</div>
                   </div>
                 </TableCell>
-                <TableCell>{employee.status}</TableCell>
+                <TableCell>{employee.gender}</TableCell>
+                <TableCell>
+                  {" "}
+                  <a href={employee.linkedIn}>linkedIn</a>
+                </TableCell>
+                <TableCell>{employee.valid ? "Valid" : "Expired"}</TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
