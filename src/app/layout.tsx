@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { EmployeeSidebar } from "@/components/EmployeeSideBar"
+import ThemeToggler from "@/components/ThemeToggler";
 import { cn } from "@/lib/utils"
 import { Inter } from 'next/font/google'
 import "./globals.css";
@@ -27,6 +28,8 @@ export default function RootLayout({
             <main className="flex-1">
               <div className="p-4">
                 <SidebarTrigger />
+                <ThemeToggler />
+
                 {children}
               </div>
             </main>

@@ -37,6 +37,7 @@ export {
 } from '@/components/ui/dropdown-menu';
 
 
+export { Textarea } from "@/components/ui/textarea"
 
 export {
     Dialog,

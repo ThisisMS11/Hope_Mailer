@@ -12,6 +12,7 @@ import {
 } from "@/imports/Shadcn_imports"
 import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from 'lucide-react'
 import FilterCheckBox from "@/components/FilterCheckBox"
+import EmailWorkflow from "@/components/something"
 
 // Sample data
 const employees = [
@@ -151,6 +152,7 @@ export default function Dashboard() {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState(employees);
   const [selectedEmployees, setSelectedEmployees] = useState<any>([]);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleFilter = () => {
     console.log({ selectedCompanies, selectedPositions })
@@ -171,8 +173,9 @@ export default function Dashboard() {
     setFilteredEmployees(employees);
   };
 
-  const handleColdEmailing = ()=>{
-    console.log({selectedEmployees});
+  const handleColdEmailing = () => {
+    setIsModalOpen(true)
+    console.log({ selectedEmployees });
   }
 
   const openAddEmployeeDialog = () => {
@@ -226,6 +229,8 @@ export default function Dashboard() {
 
         <AddEmployeeDialog buttonRef={buttonRef} />
       </div>
+
+      <EmailWorkflow isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </>
   )
 }
