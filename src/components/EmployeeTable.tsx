@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Pencil } from 'lucide-react'
+import { Key, Pencil } from 'lucide-react'
+
 
 
 export function EmployeeTable({ employees, setSelectedEmployees }: { employees: any, setSelectedEmployees: React.Dispatch<React.SetStateAction<any[]>>; }) {
@@ -40,7 +41,7 @@ export function EmployeeTable({ employees, setSelectedEmployees }: { employees: 
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[30px]"></TableHead>
-                        <TableHead>Name/ID</TableHead>
+                        <TableHead className="dark:text-pink-600 ">Name/ID</TableHead>
                         <TableHead>Position</TableHead>
                         <TableHead>Company</TableHead>
                         <TableHead>Mobile Number</TableHead>
