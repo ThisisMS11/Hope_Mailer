@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 
 export function EmployeeTable({
   employees,
@@ -72,7 +72,11 @@ export function EmployeeTable({
                 <TableCell>
                   <div>
                     <div className="font-medium text-teal-600">
-                      {employee.firstName + " " + employee.lastName}
+                      {employee.firstName.charAt(0).toUpperCase() +
+                        employee.firstName.slice(1) +
+                        " " +
+                        employee.lastName.charAt(0).toUpperCase() +
+                        employee.lastName.slice(1)}
                     </div>
                   </div>
                 </TableCell>

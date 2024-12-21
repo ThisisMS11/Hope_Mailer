@@ -10,6 +10,8 @@ export {
   CardDescription,
 } from "@/components/ui/card";
 
+export { Progress } from "@/components/ui/progress";
+
 export {
   Select,
   SelectItem,

@@ -1,6 +1,4 @@
 import { NextRequest } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { createLoggerWithLabel } from "@/app/api/utils/logger";
 import { constructPrompt } from "@/app/api/utils/PromptMaker";
 import { makeResponse } from "@/app/api/helpers/reponseMaker";

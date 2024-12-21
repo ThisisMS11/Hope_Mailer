@@ -3,13 +3,7 @@ import { EmployeeTable } from "@/components/EmployeeTable";
 import AddEmployeeDialog from "@/components/AddEmployeeDialog";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/imports/Shadcn_imports";
+
 import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from "lucide-react";
 import FilterCheckBox from "@/components/FilterCheckBox";
 import EmailWorkflow from "@/components/EmailWorkflow";
@@ -144,13 +138,13 @@ export default function Dashboard() {
                   onClick={handleResetFilters}
                   className="bg-teal-600 hover:bg-teal-700"
                 >
-                  Reset Filters <RotateCw />
+                  Refresh <RotateCw />
                 </Button>
                 <Button
                   onClick={handleColdEmailing}
                   className="bg-teal-600 hover:bg-teal-700"
                 >
-                  Start Cold Emailing <Mails />
+                  Start Mailing <Mails />
                 </Button>
               </div>
               <div className="flex items-center gap-4">
@@ -189,10 +183,13 @@ export default function Dashboard() {
         <AddEmployeeDialog buttonRef={buttonRef} />
       </div>
 
-      <EmailWorkflow
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
+      {selectedEmployees.length > 0 && (
+        <EmailWorkflow
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          employees={selectedEmployees}
+        />
+      )}
     </>
   );
 }

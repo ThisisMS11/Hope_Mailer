@@ -166,7 +166,7 @@ const DialogBox = ({
                       <Label htmlFor="mobile">Phone Number</Label>
                       <Input
                         id="mobile"
-                        type="number"
+                        type="tel"
                         placeholder="Enter phone number"
                         name="mobile"
                         value={formData.mobile}
