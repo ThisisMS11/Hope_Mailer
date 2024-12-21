@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -58,8 +58,8 @@ export function EmployeeTable({
         </TableHeader>
         <TableBody>
           {employees.map((employee: any) => (
-            <>
-              <TableRow key={employee.id}>
+            <React.Fragment key={employee.id}>
+              <TableRow>
                 <TableCell>
                   <input
                     type="checkbox"
@@ -184,7 +184,7 @@ export function EmployeeTable({
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </React.Fragment>
           ))}
         </TableBody>
       </Table>

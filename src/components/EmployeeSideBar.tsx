@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { Home } from "lucide-react";
 import {
   Sidebar,
@@ -13,7 +13,12 @@ import {
 } from "@/components/ui/sidebar";
 
 export function EmployeeSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
+
+  useEffect(() => {
+    setOpen(false)
+  },[])
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
