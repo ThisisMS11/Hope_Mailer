@@ -9,7 +9,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
 
-  return NextResponse.next();
+  // Add CORS headers
+
+  const response = NextResponse.next();
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  return response;
 }
 
 // Specify the paths you want to protect

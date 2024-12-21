@@ -1,0 +1,10 @@
+resolve some errors
+create documentation
+host it on vercel
+do touch ups and sum it up.
+
+
+npm/pip/brew install git-filter-repo
+git filter-repo --path logs/ --invert-paths
+git push origin --force --all
+

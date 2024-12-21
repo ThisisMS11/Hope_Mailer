@@ -3,13 +3,11 @@
 import { Home, Users, Mail, BarChart, Settings } from "lucide-react";
 import {
   Sidebar,
-  SidebarContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarGroupLabel,
   SidebarGroupContent,
   useSidebar,
 } from "@/components/ui/sidebar";

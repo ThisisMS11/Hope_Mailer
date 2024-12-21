@@ -1,14 +1,28 @@
 import { useState } from "react";
-import { Button, Textarea, Label, Input } from "@/imports/Shadcn_imports"; // Assuming Spinner is available in the imports
+import {
+  Button,
+  Textarea,
+  Label,
+  Input,
+  Progress,
+} from "@/imports/Shadcn_imports"; // Assuming Spinner is available in the imports
 import { CircleX, Loader } from "lucide-react";
 import axios from "axios";
-import { extractSubject } from "@/utils/UtilFunctions";
+import {
+  extractSubject,
+  personalizeEmail,
+  defaultEmailTemplate,
+  removeSubjectLine,
+} from "@/utils/UtilFunctions";
+
 const EmailWorkflow = ({
   isModalOpen,
   setIsModalOpen,
+  employees,
 }: {
   isModalOpen: Boolean;
   setIsModalOpen: any;
+  employees: any;
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedOption, setSelectedOption] = useState<
@@ -23,8 +37,8 @@ const EmailWorkflow = ({
   const [emailContent, setEmailContent] = useState<string>("");
   const [finalSubject, setFinalSubject] = useState<string>("");
 
-
-  const handleStart = () => setIsModalOpen(true);
+  const [mailingProgressBar, setMailingProgressBar] = useState<number>(0);
+  const [sendingTo, setSendingTo] = useState<string>("");
 
   const handleOptionSelect = (option: "referral" | "followup") => {
     setSelectedOption(option);
@@ -54,11 +68,11 @@ const EmailWorkflow = ({
 
       // console.info(`data : ${response.data.data}`)
 
-      const generated_body = response.data.data
+      const generated_body = response.data.data;
       setFinalSubject(extractSubject(generated_body));
+      setEmailContent(removeSubjectLine(generated_body));
 
-      setEmailContent(response.data.data); // Populate the textarea
-      setCurrentStep(4); // Move to step 4 after fetching
+      setCurrentStep(4);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -74,8 +88,57 @@ const EmailWorkflow = ({
     setIsModalOpen(false);
   };
 
-  const handleStartMailing = () => {
-    return;
+  const handleStartMailing = async () => {
+    handleNextStep();
+    if (employees.length > 0) {
+      const url = `${process.env.NEXT_PUBLIC_URL}/api/mailer`;
+
+      for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+        const finalEmailContent = personalizeEmail(employee, emailContent);
+        const payload = {
+          subject: finalSubject,
+          message: finalEmailContent,
+          email: employee.email,
+        };
+
+        console.log(finalEmailContent);
+
+        console.log(`Sending Email to ${employee.firstName}`);
+
+        setSendingTo(employee.firstName);
+
+        try {
+          const response = await axios.post(url, payload);
+          // Simulate a fake email sending event
+          // await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate 500ms delay
+
+          console.log(
+            `Email sent successfully to ${employee.email}:`,
+            response.data,
+          );
+        } catch (error) {
+          console.error(`Failed to send email to ${employee.email}:`, error);
+        }
+
+        // Update progress bar
+        const progress = Math.round(((i + 1) / employees.length) * 100);
+        setMailingProgressBar(progress);
+      }
+
+      setMailingProgressBar(100);
+
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      handleModalClose();
+    } else {
+      console.log("No employees to send emails to.");
+    }
+  };
+
+  if (employees.length === 0) {
+    alert("No Employees are selected for sending email to");
+    setIsModalOpen(false);
+    return null;
   }
 
   return (
@@ -148,9 +211,18 @@ const EmailWorkflow = ({
 
             {currentStep === 3 && (
               <div>
-                <h2 className="text-xl font-bold mb-4">
-                  Provide Email Template
-                </h2>
+                <div className="flex justify-between">
+                  <h2 className="text-xl font-bold mb-4">
+                    Provide Email Template
+                  </h2>
+                  <Button
+                    onClick={() => {
+                      setEmailTemplate(defaultEmailTemplate);
+                    }}
+                  >
+                    Use Default
+                  </Button>
+                </div>
                 <Textarea
                   className="w-full border rounded p-2"
                   placeholder="Paste Email Template here..."
@@ -166,30 +238,7 @@ const EmailWorkflow = ({
 
             {currentStep === 4 && (
               <div>
-                <h2 className="text-xl font-bold mb-4">
-                  Generated Email Content
-                </h2>
-                <Textarea
-                  className="w-full border rounded p-2"
-                  placeholder="Generated Email Content will appear here..."
-                  value={emailContent}
-                  onChange={(e) => setEmailContent(e.target.value)}
-                />
-                <div className="flex justify-between mt-4">
-                  <Button onClick={handleBackStep}>Back</Button>
-                  <div >
-                    <Button className='mr-4' onClick={handleSubmit}>Retry</Button>
-                    <Button onClick={handleNextStep}>Next</Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <h2 className="text-xl font-bold mb-4">
-                  Mark Your Variables
-                </h2>
+                <h2 className="text-xl font-bold mb-4">Mark Your Variables</h2>
 
                 <Label htmlFor="finalSubject" className="mb-2">
                   Subject
@@ -214,8 +263,24 @@ const EmailWorkflow = ({
                 />
                 <div className="flex justify-between mt-4">
                   <Button onClick={handleBackStep}>Back</Button>
-                  <Button onClick={handleSubmit}>Start Mailing</Button>
+                  <div>
+                    <Button className="mr-4" onClick={handleSubmit}>
+                      Retry
+                    </Button>
+                    <Button onClick={handleStartMailing}>Start Mailing</Button>
+                  </div>
                 </div>
+              </div>
+            )}
+
+            {currentStep === 5 && (
+              <div>
+                <Progress
+                  value={mailingProgressBar}
+                  className="w-[90%] mx-auto"
+                  max={100}
+                />
+                <div className="text-center mt-4 text-gray-500 text-lg">{`Sending email to ${sendingTo}`}</div>
               </div>
             )}
           </div>
