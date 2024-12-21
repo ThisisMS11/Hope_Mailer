@@ -4,7 +4,7 @@ import AddEmployeeDialog from "@/components/AddEmployeeDialog";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect } from "react";
 
-import { Plus, LayoutGrid, List, RotateCw, Filter, Mails } from "lucide-react";
+import { Plus, LayoutGrid, List, RotateCw, Mails } from "lucide-react";
 import FilterCheckBox from "@/components/FilterCheckBox";
 import EmailWorkflow from "@/components/EmailWorkflow";
 import axios from "axios";
@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any>([]);
+  const [allEmployees, setAllEmployees] = useState<any>([]);
   const [selectedEmployees, setSelectedEmployees] = useState<any>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,12 +47,12 @@ export default function Dashboard() {
   const handleFilter = () => {
     console.log({ selectedCompanies, selectedPositions });
 
-    if (selectedCompanies.length === 0 && selectedCompanies.length === 0) {
-      fetchContacts();
+    if (selectedCompanies.length === 0 && selectedPositions.length === 0) {
+      setFilteredEmployees(allEmployees);
       return;
     }
 
-    const filtered = filteredEmployees.filter((employee: any) => {
+    const filtered = allEmployees.filter((employee: any) => {
       const matchesPosition =
         selectedPositions.length === 0 ||
         selectedPositions.includes(employee.position);
@@ -60,13 +61,14 @@ export default function Dashboard() {
         selectedCompanies.includes(employee.company);
       return matchesPosition && matchesCompany && employee.valid;
     });
+
     setFilteredEmployees(filtered);
   };
 
   const handleResetFilters = () => {
     setSelectedCompanies([]);
     setSelectedPositions([]);
-    fetchContacts();
+    setFilteredEmployees(allEmployees);
   };
 
   const handleColdEmailing = () => {
@@ -81,13 +83,18 @@ export default function Dashboard() {
   };
 
   async function fetchContacts() {
+    console.log("[Fetch contacts Called]");
     setIsLoading(true);
     setFetchError(null);
     try {
       const url = `${process.env.NEXT_PUBLIC_URL}/api/contacts`;
       const response = await axios.get(url);
-      console.log(response.data.data);
-      setFilteredEmployees(response.data.data);
+
+      const resultEmployees = response.data.data;
+      // console.log(response.data.data);
+
+      setFilteredEmployees(resultEmployees);
+      setAllEmployees(resultEmployees);
     } catch (error: any) {
       setFetchError(
         error?.response?.data?.message ||
@@ -99,8 +106,14 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+    console.log("useEffect 1");
     fetchContacts();
   }, []);
+
+  useEffect(() => {
+    console.log("useEffect 2");
+    handleFilter();
+  }, [selectedPositions, selectedCompanies]);
 
   return (
     <>
@@ -129,16 +142,10 @@ export default function Dashboard() {
                   list={positions}
                 />
                 <Button
-                  onClick={handleFilter}
-                  className="bg-teal-600 hover:bg-teal-700"
-                >
-                  Apply Filters <Filter />
-                </Button>
-                <Button
                   onClick={handleResetFilters}
                   className="bg-teal-600 hover:bg-teal-700"
                 >
-                  Refresh <RotateCw />
+                  Reset Filters <RotateCw />
                 </Button>
                 <Button
                   onClick={handleColdEmailing}
