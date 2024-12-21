@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Users, Mail, BarChart, Settings } from "lucide-react";
+import { Home } from "lucide-react";
 import {
   Sidebar,
   SidebarHeader,
@@ -31,34 +31,10 @@ export function EmployeeSidebar() {
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Dashboard">
+          <SidebarMenuItem className="flex justify-center">
+            <SidebarMenuButton tooltip="Dashboard" className="pl-4">
               <Home className="h-4 w-4" />
               <span>Dashboard</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton isActive tooltip="Employees">
-              <Users className="h-4 w-4" />
-              <span>Employees</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Messages">
-              <Mail className="h-4 w-4" />
-              <span>Messages</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Analytics">
-              <BarChart className="h-4 w-4" />
-              <span>Analytics</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Settings">
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
