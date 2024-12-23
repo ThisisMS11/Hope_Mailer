@@ -5,16 +5,15 @@ import {
   Input,
   Progress,
   Checkbox,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/imports/Shadcn_imports";
 import { useWorkflow } from "@/context/EmailWorkflow";
 import { steps } from "@/utils/UtilFunctions";
-import {
-  defaultEmailTemplate,
-  defaultEmailTemplateForFollowUp,
-  defaultEmailTemplateForReferral,
-  defaultEmailSubjectForFollowUp,
-  defaultEmailSubjectForReferral,
-} from "@/utils/UtilStrings";
+import { defaultEmailTemplate, emailTemplates } from "@/utils/UtilStrings";
 
 export const StepSelectOption = () => {
   const { updateState } = useWorkflow();
@@ -201,22 +200,16 @@ export const StepEditContent = ({
 }: any) => {
   const { state, updateState } = useWorkflow();
 
-  const setDefaultTemplate = () => {
-    switch (state.emailContext) {
-      case "Asking for referral":
-        updateState({
-          emailContent: defaultEmailTemplateForReferral,
-          finalSubject: defaultEmailSubjectForReferral,
-        });
-        break;
-      case "followup with HR":
-        updateState({
-          emailContent: defaultEmailTemplateForFollowUp,
-          finalSubject: defaultEmailSubjectForFollowUp,
-        });
-        break;
-      default:
-        break;
+  type TemplateKey = keyof typeof emailTemplates;
+
+  const handleTemplateSelection = (templateKey: TemplateKey) => {
+    console.log(templateKey);
+    const template = emailTemplates[templateKey];
+    if (template) {
+      updateState({
+        emailContent: template.content,
+        finalSubject: template.subject,
+      });
     }
   };
 
@@ -225,7 +218,15 @@ export const StepEditContent = ({
       <div className="flex justify-between items-start">
         <h2 className="text-xl font-bold mb-4">Mark Your Variables</h2>
         {state.currentStep === "pasteAndMark" && (
-          <Button onClick={setDefaultTemplate}>Use Default Template</Button>
+          <Select onValueChange={handleTemplateSelection}>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose Template" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="followUp">Follow Up Template</SelectItem>
+              <SelectItem value="referral">Referral Template</SelectItem>
+            </SelectContent>
+          </Select>
         )}
       </div>
 

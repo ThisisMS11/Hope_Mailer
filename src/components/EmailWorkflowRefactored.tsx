@@ -119,13 +119,13 @@ const EmailWorkflow = ({
         setSendingTo(employee.firstName);
 
         try {
-          // const response = await axios.post(url, payload);
+          const response = await axios.post(url, payload);
           // Simulate a fake email sending event
-          await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate 500ms delay
+          // await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate 500ms delay
 
           console.log(
             `Email sent successfully to ${employee.email}:`,
-            // response.data,
+            response.data,
           );
         } catch (error) {
           console.error(`Failed to send email to ${employee.email}:`, error);
