@@ -20,7 +20,9 @@ const SignIn = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-        <h1 className="text-3xl font-semibold text-center text-gray-800">Welcome to HopeMailer</h1>
+        <h1 className="text-3xl font-semibold text-center text-gray-800">
+          Welcome to HopeMailer
+        </h1>
         <p className="mt-2 text-center text-gray-600 text-sm">
           Sign in to access your dashboard and manage your emails.
         </p>

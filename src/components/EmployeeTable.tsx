@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
+import { Pencil, Linkedin } from "lucide-react";
 
 export function EmployeeTable({
   employees,
@@ -45,7 +45,7 @@ export function EmployeeTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[30px]"></TableHead>
-            <TableHead className="dark:text-pink-600 ">Name/ID</TableHead>
+            <TableHead>Name/ID</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Mobile Number</TableHead>
@@ -102,7 +102,9 @@ export function EmployeeTable({
                 <TableCell>{employee.gender}</TableCell>
                 <TableCell>
                   {" "}
-                  <a href={employee.linkedIn}>linkedIn</a>
+                  <a href={employee.linkedIn}>
+                    <Linkedin className="text-gray-500 w-5 h-5" />
+                  </a>
                 </TableCell>
                 <TableCell>{employee.valid ? "Valid" : "Expired"}</TableCell>
                 <TableCell>
