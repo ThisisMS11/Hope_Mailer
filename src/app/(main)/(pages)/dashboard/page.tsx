@@ -6,7 +6,6 @@ import { useRef, useState, useEffect } from "react";
 
 import { Plus, LayoutGrid, List, RotateCw, Mails } from "lucide-react";
 import FilterCheckBox from "@/components/FilterCheckBox";
-import EmailWorkflow from "@/components/EmailWorkflow";
 import EmailWorkflowRefactored from "@/components/EmailWorkflowRefactored";
 import axios from "axios";
 import { EmailWorkflowProvider } from "@/context/EmailWorkflow";

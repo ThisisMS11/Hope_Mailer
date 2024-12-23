@@ -18,6 +18,8 @@ export {
   SelectTrigger,
   SelectValue,
   SelectContent,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 
 export { Checkbox } from "@/components/ui/checkbox";
