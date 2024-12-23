@@ -16,8 +16,8 @@ export function EmployeeSidebar() {
   const { open, setOpen } = useSidebar();
 
   useEffect(() => {
-    setOpen(false)
-  },[])
+    setOpen(false);
+  }, []);
 
   return (
     <Sidebar collapsible="icon">

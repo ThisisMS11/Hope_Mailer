@@ -74,9 +74,63 @@ Your support would mean a lot to someone eager to start their journey in tech.
 I've attached my resume for you to look over. I'm happy to share any additional details if needed.
 `;
 
+const steps = {
+  selectOption: {
+    key: "selectOption",
+    label: "Select Between Custom and AI Generated",
+    component: "StepSelectOption",
+  },
+  custom: {
+    key: "custom",
+    steps: {
+      pasteAndMark: {
+        key: "pasteAndMark",
+        label: "Paste your template and Mark Variables",
+        component: "StepEditContent",
+      },
+    },
+  },
+  aiGenerated: {
+    key: "aiGenerated",
+    steps: {
+      emailContext: {
+        key: "emailContext",
+        label: "Select emailContext",
+        component: "StepEmailContext",
+      },
+      jobDescription: {
+        key: "jobDescription",
+        label: "Job Description",
+        component: "StepJobDescription",
+      },
+      chooseResume: {
+        key: "chooseResume",
+        label: "Choose Resume",
+        component: "StepUploadResume",
+      },
+      referenceTemplate: {
+        key: "referenceTemplate",
+        label: "Reference Email Template",
+        component: "StepProvideEmailTemplate",
+      },
+      editAndMark: {
+        key: "editAndMark",
+        label: "Edit and Mark Variables",
+        component: "StepEditContent",
+      },
+    },
+  },
+  final: {
+    key: "MailingStarts",
+    label: "Mailing to Selected Contacts",
+    component: "FinalMailing",
+  },
+};
+
 export {
   extractSubject,
   personalizeEmail,
   defaultEmailTemplate,
   removeSubjectLine,
+  steps,
 };

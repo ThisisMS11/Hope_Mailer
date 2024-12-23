@@ -14,6 +14,15 @@ import {
   defaultEmailTemplate,
   removeSubjectLine,
 } from "@/utils/UtilFunctions";
+import {
+  StepSelectOption,
+  StepJobDescription,
+  StepUploadResume,
+  StepProvideEmailTemplate,
+  StepEmailContext,
+  StepEditContent,
+  FinalMailing,
+} from "@/components/EmailWorkflowComps";
 
 const EmailWorkflow = ({
   isModalOpen,
