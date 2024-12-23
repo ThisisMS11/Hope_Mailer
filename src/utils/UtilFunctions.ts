@@ -13,13 +13,19 @@ function extractSubject(emailText: string) {
 }
 
 function personalizeEmail(employee: any, emailContent: string) {
-  const { gender, lastName, position } = employee;
+
+  console.log('before editing', emailContent)
+  console.log(employee)
+  const { gender, lastName, position, company, experience } = employee;
 
   const salutation = gender === "male" ? "Mr." : "Ms.";
+  const article = /^[aeiouAEIOU]/.test(position) ? "an" : "a";
 
   let personalizedContent = emailContent
     .replace("{{person}}", `${salutation} ${lastName}`)
-    .replace("{{position}}", position || "");
+    .replace("{{position}}", `${article} ${position}`)
+    .replace("{{experience}}", experience || "")
+    .replace("{{company}}", company || "");
 
   personalizedContent = personalizedContent
     .split("\n") // Split by newline

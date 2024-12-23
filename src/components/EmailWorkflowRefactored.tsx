@@ -27,16 +27,11 @@ const EmailWorkflow = ({
   setIsModalOpen: any;
   employees: any;
 }) => {
-  const { state, setState, initialState } = useWorkflow();
+  const { state, initialState, updateState } = useWorkflow();
 
   const [contentLoading, setContentLoading] = useState(false);
-
   const [mailingProgressBar, setMailingProgressBar] = useState<number>(0);
   const [sendingTo, setSendingTo] = useState<string>("");
-
-  const updateState = (setState: any, updates: Partial<any>) => {
-    setState((prev: any) => ({ ...prev, ...updates }));
-  };
 
   const fetchGeneratedContent = async () => {
     setContentLoading(true); // Show loader
@@ -60,20 +55,12 @@ const EmailWorkflow = ({
 
       const generated_body = response.data.data;
 
-      setState((prev: any) => ({
-        ...prev,
-        emailContent: removeSubjectLine(generated_body),
-      }));
-
-      setState((prev: any) => ({
-        ...prev,
-        finalSubject: extractSubject(generated_body),
-      }));
-
-      setState((prev: any) => ({
-        ...prev,
+      updateState({ emailContent: removeSubjectLine(generated_body) })
+      updateState({ finalSubject: extractSubject(generated_body) })
+      updateState({
         currentStep: steps.aiGenerated.steps.editAndMark.key,
-      }));
+      })
+
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -81,13 +68,13 @@ const EmailWorkflow = ({
   };
 
   const handleModalClose = () => {
-    updateState(setState, initialState);
+    updateState(initialState);
     setIsModalOpen(false);
   };
 
   const handleStartMailing = async () => {
     console.log({ state, employees });
-    updateState(setState, { currentStep: steps.final.key });
+    updateState({ currentStep: steps.final.key });
 
     if (employees.length > 0) {
       const url = `${process.env.NEXT_PUBLIC_URL}/api/mailer`;
