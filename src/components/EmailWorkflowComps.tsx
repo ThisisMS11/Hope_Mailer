@@ -8,25 +8,8 @@ import {
 import { useWorkflow } from "@/context/EmailWorkflow";
 import { defaultEmailTemplate, steps } from "@/utils/UtilFunctions";
 
-// const initialState = {
-//     currentStep: "selectOption",
-//     emailContext: null,
-//     jobDescription: "",
-//     resumeFile: null,
-//     emailTemplate: "",
-//     contentLoading: false,
-//     emailContent: "",
-//     finalSubject: "",
-//     mailingProgressBar: 0,
-//     sendingTo: "",
-//   };
-
-// const updateState = (setState: any, updates: Partial<any>) => {
-//     setState((prev: any) => ({ ...prev, ...updates }));
-// };
-
 export const StepSelectOption = () => {
-  const { setState } = useWorkflow();
+  const { updateState } = useWorkflow();
 
   return (
     <div>
@@ -34,20 +17,18 @@ export const StepSelectOption = () => {
       <div className="flex flex-col space-y-4">
         <Button
           onClick={() =>
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.custom.steps.pasteAndMark.key,
-            }))
+            })
           }
         >
           Custom
         </Button>
         <Button
           onClick={() =>
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.emailContext.key,
-            }))
+            })
           }
         >
           AI Generated
@@ -58,15 +39,14 @@ export const StepSelectOption = () => {
 };
 
 export const StepEmailContext = () => {
-  const { setState } = useWorkflow();
+  const { updateState } = useWorkflow();
   const handleOptionSelect = (
     option: "Asking for referral" | "followup with HR",
   ) => {
-    setState((prev: any) => ({ ...prev, emailContext: option }));
-    setState((prev: any) => ({
-      ...prev,
+    updateState({
+      emailContext: option,
       currentStep: steps.aiGenerated.steps.jobDescription.key,
-    }));
+    })
   };
 
   return (
@@ -85,7 +65,7 @@ export const StepEmailContext = () => {
 };
 
 export const StepJobDescription = () => {
-  const { state, setState } = useWorkflow();
+  const { state, updateState } = useWorkflow();
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Enter Job Description</h2>
@@ -94,16 +74,17 @@ export const StepJobDescription = () => {
         placeholder="Paste job description here..."
         value={state.jobDescription}
         onChange={(e) =>
-          setState((prev: any) => ({ ...prev, jobDescription: e.target.value }))
+          updateState({
+            jobDescription: e.target.value
+          })
         }
       />
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.emailContext.key,
-            }));
+            })
           }}
         >
           Back
@@ -111,10 +92,9 @@ export const StepJobDescription = () => {
 
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.chooseResume.key,
-            }));
+            })
           }}
         >
           Next
@@ -125,7 +105,7 @@ export const StepJobDescription = () => {
 };
 
 export const StepUploadResume = () => {
-  const { state, setState } = useWorkflow();
+  const { updateState } = useWorkflow();
   return (
     <div>
       <Label htmlFor="resume" className="mb-2">
@@ -136,29 +116,26 @@ export const StepUploadResume = () => {
         type="file"
         accept=".pdf"
         onChange={(e) =>
-          setState((prev: any) => ({
-            ...prev,
+          updateState({
             resumeFile: e.target.files?.[0] || null,
-          }))
+          })
         }
       />
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.jobDescription.key,
-            }));
+            })
           }}
         >
           Back
         </Button>
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.referenceTemplate.key,
-            }));
+            })
           }}
         >
           Next
@@ -169,17 +146,16 @@ export const StepUploadResume = () => {
 };
 
 export const StepProvideEmailTemplate = ({ fetchGeneratedContent }: any) => {
-  const { state, setState } = useWorkflow();
+  const { state, updateState } = useWorkflow();
   return (
     <div>
       <div className="flex justify-between">
         <h2 className="text-xl font-bold mb-4">Provide Email Template</h2>
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               emailTemplate: defaultEmailTemplate,
-            }));
+            })
           }}
         >
           Use Default
@@ -190,16 +166,18 @@ export const StepProvideEmailTemplate = ({ fetchGeneratedContent }: any) => {
         placeholder="Paste Email Template here..."
         value={state.emailTemplate}
         onChange={(e) =>
-          setState((prev: any) => ({ ...prev, emailTemplate: e.target.value }))
+          updateState({
+            emailTemplate: e.target.value
+          })
         }
+
       />
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep: steps.aiGenerated.steps.chooseResume.key,
-            }));
+            })
           }}
         >
           Back
@@ -214,7 +192,7 @@ export const StepEditContent = ({
   fetchGeneratedContent,
   handleStartMailing,
 }: any) => {
-  const { state, setState } = useWorkflow();
+  const { state, updateState } = useWorkflow();
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Mark Your Variables</h2>
@@ -227,7 +205,9 @@ export const StepEditContent = ({
         type="text"
         value={state.finalSubject}
         onChange={(e) =>
-          setState((prev: any) => ({ ...prev, finalSubject: e.target.value }))
+          updateState({
+            finalSubject: e.target.value
+          })
         }
       />
 
@@ -240,19 +220,20 @@ export const StepEditContent = ({
         placeholder="Generated Email Content will appear here..."
         value={state.emailContent}
         onChange={(e) =>
-          setState((prev: any) => ({ ...prev, emailContent: e.target.value }))
+          updateState({
+            emailContent: e.target.value
+          })
         }
       />
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
-            setState((prev: any) => ({
-              ...prev,
+            updateState({
               currentStep:
                 state.currentStep !== "pasteAndMark"
                   ? steps.aiGenerated.steps.referenceTemplate.key
                   : steps.selectOption.key,
-            }));
+            })
           }}
         >
           Back

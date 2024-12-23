@@ -13,8 +13,13 @@ const EmailWorkflowProvider = ({ children }: any) => {
   };
 
   const [state, setState] = useState(initialState);
+
+  const updateState = (updates: Partial<any>) => {
+    setState((prev: any) => ({ ...prev, ...updates }));
+  };
+
   return (
-    <WorkflowContext.Provider value={{ state, setState, initialState }}>
+    <WorkflowContext.Provider value={{ state, setState, initialState, updateState }}>
       {children}
     </WorkflowContext.Provider>
   );
