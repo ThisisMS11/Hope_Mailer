@@ -20,6 +20,8 @@ export {
   SelectContent,
 } from "@/components/ui/select";
 
+export { Checkbox } from "@/components/ui/checkbox";
+
 export {
   Table,
   TableHeader,

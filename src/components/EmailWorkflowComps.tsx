@@ -4,9 +4,17 @@ import {
   Label,
   Input,
   Progress,
+  Checkbox,
 } from "@/imports/Shadcn_imports";
 import { useWorkflow } from "@/context/EmailWorkflow";
-import { defaultEmailTemplate, steps } from "@/utils/UtilFunctions";
+import { steps } from "@/utils/UtilFunctions";
+import {
+  defaultEmailTemplate,
+  defaultEmailTemplateForFollowUp,
+  defaultEmailTemplateForReferral,
+  defaultEmailSubjectForFollowUp,
+  defaultEmailSubjectForReferral,
+} from "@/utils/UtilStrings";
 
 export const StepSelectOption = () => {
   const { updateState } = useWorkflow();
@@ -46,7 +54,7 @@ export const StepEmailContext = () => {
     updateState({
       emailContext: option,
       currentStep: steps.aiGenerated.steps.jobDescription.key,
-    })
+    });
   };
 
   return (
@@ -75,7 +83,7 @@ export const StepJobDescription = () => {
         value={state.jobDescription}
         onChange={(e) =>
           updateState({
-            jobDescription: e.target.value
+            jobDescription: e.target.value,
           })
         }
       />
@@ -84,7 +92,7 @@ export const StepJobDescription = () => {
           onClick={() => {
             updateState({
               currentStep: steps.aiGenerated.steps.emailContext.key,
-            })
+            });
           }}
         >
           Back
@@ -94,7 +102,7 @@ export const StepJobDescription = () => {
           onClick={() => {
             updateState({
               currentStep: steps.aiGenerated.steps.chooseResume.key,
-            })
+            });
           }}
         >
           Next
@@ -126,7 +134,7 @@ export const StepUploadResume = () => {
           onClick={() => {
             updateState({
               currentStep: steps.aiGenerated.steps.jobDescription.key,
-            })
+            });
           }}
         >
           Back
@@ -135,7 +143,7 @@ export const StepUploadResume = () => {
           onClick={() => {
             updateState({
               currentStep: steps.aiGenerated.steps.referenceTemplate.key,
-            })
+            });
           }}
         >
           Next
@@ -155,7 +163,7 @@ export const StepProvideEmailTemplate = ({ fetchGeneratedContent }: any) => {
           onClick={() => {
             updateState({
               emailTemplate: defaultEmailTemplate,
-            })
+            });
           }}
         >
           Use Default
@@ -167,17 +175,16 @@ export const StepProvideEmailTemplate = ({ fetchGeneratedContent }: any) => {
         value={state.emailTemplate}
         onChange={(e) =>
           updateState({
-            emailTemplate: e.target.value
+            emailTemplate: e.target.value,
           })
         }
-
       />
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
             updateState({
               currentStep: steps.aiGenerated.steps.chooseResume.key,
-            })
+            });
           }}
         >
           Back
@@ -193,9 +200,35 @@ export const StepEditContent = ({
   handleStartMailing,
 }: any) => {
   const { state, updateState } = useWorkflow();
+
+  const setDefaultTemplate = () => {
+    switch (state.emailContext) {
+      case "Asking for referral":
+        updateState({
+          emailContent: defaultEmailTemplateForReferral,
+          finalSubject: defaultEmailSubjectForReferral,
+        });
+        break;
+      case "followup with HR":
+        updateState({
+          emailContent: defaultEmailTemplateForFollowUp,
+          finalSubject: defaultEmailSubjectForFollowUp,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Mark Your Variables</h2>
+      <div className="flex justify-between items-start">
+        <h2 className="text-xl font-bold mb-4">Mark Your Variables</h2>
+        {state.currentStep === "pasteAndMark" && (
+          <Button onClick={setDefaultTemplate}>Use Default Template</Button>
+        )}
+      </div>
+
       <Label htmlFor="finalSubject" className="mb-2">
         Subject
       </Label>
@@ -206,13 +239,13 @@ export const StepEditContent = ({
         value={state.finalSubject}
         onChange={(e) =>
           updateState({
-            finalSubject: e.target.value
+            finalSubject: e.target.value,
           })
         }
       />
 
       <Label htmlFor="EditingFinalContent" className="my-4">
-        Edit Content for final Email Body
+        Edit Content for Final Email Body
       </Label>
       <Textarea
         name="EditingFinalContent"
@@ -221,10 +254,61 @@ export const StepEditContent = ({
         value={state.emailContent}
         onChange={(e) =>
           updateState({
-            emailContent: e.target.value
+            emailContent: e.target.value,
           })
         }
       />
+
+      <div className="my-4">
+        <div className="flex items-center mb-2">
+          <Checkbox
+            id="attachResume"
+            checked={state.attachResumeLink || false}
+            onCheckedChange={(checked) =>
+              updateState({ attachResumeLink: checked })
+            }
+          />
+          <Label htmlFor="attachResume" className="ml-2">
+            Attach Resume
+          </Label>
+        </div>
+        {state.attachResumeLink && (
+          <Input
+            id="resumeLink"
+            name="resumeLink"
+            type="text"
+            placeholder="Enter Resume Link"
+            className="mb-4"
+            value={state.resumeLink || ""}
+            onChange={(e) => updateState({ resumeLink: e.target.value })}
+          />
+        )}
+
+        <div className="flex items-center mb-2">
+          <Checkbox
+            id="attachInternshipLink"
+            checked={state.attachInternshipLink || false}
+            onCheckedChange={(checked) =>
+              updateState({ attachInternshipLink: checked })
+            }
+          />
+          <Label htmlFor="attachInternshipLink" className="ml-2">
+            Attach Internship Link
+          </Label>
+        </div>
+        {state.attachInternshipLink && (
+          <Input
+            id="internshipLink"
+            name="internshipLink"
+            type="text"
+            placeholder="Enter Internship Link"
+            className="mb-4"
+            value={state.internshipLink || ""}
+            onChange={(e) => updateState({ internshipLink: e.target.value })}
+          />
+        )}
+      </div>
+
       <div className="flex justify-between mt-4">
         <Button
           onClick={() => {
@@ -233,7 +317,7 @@ export const StepEditContent = ({
                 state.currentStep !== "pasteAndMark"
                   ? steps.aiGenerated.steps.referenceTemplate.key
                   : steps.selectOption.key,
-            })
+            });
           }}
         >
           Back

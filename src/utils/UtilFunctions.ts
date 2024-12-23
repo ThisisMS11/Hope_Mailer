@@ -1,8 +1,6 @@
 function extractSubject(emailText: string) {
-  // Split the input text into lines
   const lines = emailText.split("\n");
 
-  // Find the line that starts with 'Subject:'
   for (const line of lines) {
     if (line.startsWith("Subject:")) {
       return line.replace("Subject:", "").trim();
@@ -12,10 +10,25 @@ function extractSubject(emailText: string) {
   return "Subject not found";
 }
 
-function personalizeEmail(employee: any, emailContent: string) {
+function personalizeEmailSubject(
+  subject: string,
+  jobPosition: string,
+  company: string,
+) {
+  let personalizedEmailSubject = subject
+    .replace("{{jobPosition}}", jobPosition)
+    .replace("{{company}}", company);
+  return personalizedEmailSubject;
+}
 
-  console.log('before editing', emailContent)
-  console.log(employee)
+function personalizeEmail(
+  employee: any,
+  emailContent: string,
+  attachResumeLink: boolean,
+  attachInternshipLink: boolean,
+  internshipLink?: string,
+  resumeLink?: string,
+) {
   const { gender, lastName, position, company, experience } = employee;
 
   const salutation = gender === "male" ? "Mr." : "Ms.";
@@ -28,17 +41,29 @@ function personalizeEmail(employee: any, emailContent: string) {
     .replace("{{company}}", company || "");
 
   personalizedContent = personalizedContent
-    .split("\n") // Split by newline
-    .map((line) => `<p>${line.trim()}</p>`) // Wrap each line in <p> tags
-    .join(""); // Join back into a single string
+    .split("\n")
+    .map((line) => `<p>${line.trim()}</p>`)
+    .join("");
+
+  let linksContent = "";
+
+  if (attachResumeLink) {
+    resumeLink = resumeLink === "" ? "https://dub.sh/56eJZk7" : resumeLink;
+    linksContent += `<a href=${resumeLink} target="_blank" style="color: #007bff; text-decoration: none;">Resume Link</a><br>`;
+  }
+
+  if (attachInternshipLink) {
+    linksContent += `<a href=${internshipLink} target="_blank" style="color: #007bff; text-decoration: none;">Internship Link</a><br>`;
+  }
 
   const finalEmailContent = `
               ${personalizedContent}
   
               <p>
-                  <a href="https://link-to-resume.com" target="_blank" style="color: #007bff; text-decoration: none;">Resume Link</a><br>
-                  <a href="https://link-to-internship.com" target="_blank" style="color: #007bff; text-decoration: none;">Internship Link</a>
+                  ${linksContent}
               </p>
+
+              <p>Thank you for taking the time to read through this email.</p>
   
               <p>
                   Best regards,<br><br>
@@ -58,27 +83,14 @@ function personalizeEmail(employee: any, emailContent: string) {
 
 /* To remove the subject line from the generated content */
 function removeSubjectLine(emailContent: string) {
-  // Split the content by the newline character and return everything after the first empty line (which separates the subject)
   const lines = emailContent.split("\n");
   const startIndex = lines.findIndex((line) => line.trim().startsWith("Dear"));
 
   if (startIndex !== -1) {
     return lines.slice(startIndex).join("\n");
   }
-  return emailContent; // Return the original content if "Dear" is not found
+  return emailContent;
 }
-
-const defaultEmailTemplate = `
-Dear Mr.Garg,
-
-My name is Mohit Saini and I am a final-year Computer Science student at IIIT Jabalpur, specializing in backend Technologies with experience across JavaScript, Python, Django, PostgreSQL, MERN stack, Docker, Linux, and AWS. I'm also skilled in SQL, C++, Golang, and have a strong aptitude for problem-solving.
-
-I'm reaching out to you today because I'm interested in the Intern role at Delhivery. Given your valuable experience there as a Senior SDE, I would greatly value your support in referring me for the position or connecting me with the HR team if you feel my profile aligns well with the requirements.
-
-Your support would mean a lot to someone eager to start their journey in tech.
-
-I've attached my resume for you to look over. I'm happy to share any additional details if needed.
-`;
 
 const steps = {
   selectOption: {
@@ -136,7 +148,7 @@ const steps = {
 export {
   extractSubject,
   personalizeEmail,
-  defaultEmailTemplate,
   removeSubjectLine,
+  personalizeEmailSubject,
   steps,
 };

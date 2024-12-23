@@ -4,9 +4,11 @@ import axios from "axios";
 import {
   extractSubject,
   personalizeEmail,
+  personalizeEmailSubject,
   removeSubjectLine,
   steps,
 } from "@/utils/UtilFunctions";
+
 import { useWorkflow } from "@/context/EmailWorkflow";
 import {
   StepSelectOption,
@@ -55,12 +57,11 @@ const EmailWorkflow = ({
 
       const generated_body = response.data.data;
 
-      updateState({ emailContent: removeSubjectLine(generated_body) })
-      updateState({ finalSubject: extractSubject(generated_body) })
+      updateState({ emailContent: removeSubjectLine(generated_body) });
+      updateState({ finalSubject: extractSubject(generated_body) });
       updateState({
         currentStep: steps.aiGenerated.steps.editAndMark.key,
-      })
-
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -76,35 +77,55 @@ const EmailWorkflow = ({
     console.log({ state, employees });
     updateState({ currentStep: steps.final.key });
 
+    const {
+      finalSubject,
+      jobPosition,
+      emailContent,
+      attachResumeLink,
+      attachInternshipLink,
+      internshipLink,
+      resumeLink,
+    } = state;
+
     if (employees.length > 0) {
       const url = `${process.env.NEXT_PUBLIC_URL}/api/mailer`;
 
       for (let i = 0; i < employees.length; i++) {
         const employee = employees[i];
+        const finalEmailSubject = personalizeEmailSubject(
+          finalSubject,
+          jobPosition,
+          employee.company,
+        );
         const finalEmailContent = personalizeEmail(
           employee,
-          state.emailContent,
+          emailContent,
+          attachResumeLink,
+          attachInternshipLink,
+          internshipLink,
+          resumeLink,
         );
+
         const payload = {
-          subject: state.finalSubject,
+          subject: finalEmailSubject,
           message: finalEmailContent,
           email: employee.email,
         };
 
-        console.log(finalEmailContent);
+        console.log({ finalEmailSubject, finalEmailContent });
 
         console.log(`Sending Email to ${employee.firstName}`);
 
         setSendingTo(employee.firstName);
 
         try {
-          const response = await axios.post(url, payload);
+          // const response = await axios.post(url, payload);
           // Simulate a fake email sending event
-          // await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate 500ms delay
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate 500ms delay
 
           console.log(
             `Email sent successfully to ${employee.email}:`,
-            response.data,
+            // response.data,
           );
         } catch (error) {
           console.error(`Failed to send email to ${employee.email}:`, error);

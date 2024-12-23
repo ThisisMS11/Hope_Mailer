@@ -6,10 +6,15 @@ const EmailWorkflowProvider = ({ children }: any) => {
     currentStep: "selectOption",
     emailContext: null,
     jobDescription: "",
+    jobPosition: "",
     resumeFile: null,
     emailTemplate: "",
     emailContent: "",
     finalSubject: "",
+    attachResumeLink: false,
+    resumeLink: "",
+    attachInternshipLink: false,
+    internshipLink: "",
   };
 
   const [state, setState] = useState(initialState);
@@ -19,7 +24,9 @@ const EmailWorkflowProvider = ({ children }: any) => {
   };
 
   return (
-    <WorkflowContext.Provider value={{ state, setState, initialState, updateState }}>
+    <WorkflowContext.Provider
+      value={{ state, setState, initialState, updateState }}
+    >
       {children}
     </WorkflowContext.Provider>
   );
