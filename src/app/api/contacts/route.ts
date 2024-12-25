@@ -26,16 +26,9 @@ export const POST = async (req: NextRequest) => {
       experience,
     } = body;
 
-    const userEmail = session?.user?.email;
     // @ts-ignore
-    const user = await prisma.user.findUnique({ where: { email: userEmail } });
-
-    if (!user) {
-      logger.error(`user not found with email ${email}`);
-      throw new Error(`User with email ${email} not found`);
-    }
-
-    const userId = user?.id;
+    const userId = session?.user?.id;
+    logger.info(`UserId inside the session is ${userId}`);
 
     // Validate input
     if (
@@ -96,6 +89,7 @@ export const GET = async (req: NextRequest) => {
   try {
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
+    const session = await getServerSession(authOptions);
 
     if (id) {
       const contact = await prisma.contact.findUnique({
@@ -115,7 +109,11 @@ export const GET = async (req: NextRequest) => {
         contact,
       );
     } else {
-      const contacts = await prisma.contact.findMany();
+      // @ts-ignore
+      const userId = session?.user?.id;
+      logger.info(`UserId inside the session is ${userId}`);
+
+      const contacts = await prisma.contact.findMany({ where: { userId } });
       logger.info("Contacts retrieved successfully.");
       return makeResponse(
         200,

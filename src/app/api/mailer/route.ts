@@ -2,12 +2,23 @@ import { NextRequest } from "next/server";
 import { createLoggerWithLabel } from "@/app/api/utils/logger";
 import { makeResponse } from "@/app/api/helpers/reponseMaker";
 import { sendEmail } from "../utils/EmailHandler";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 const logger = createLoggerWithLabel("AI_EMAIL_SENDER");
 
 export const POST = async (req: NextRequest) => {
   try {
     logger.info("Starting the email sending process.");
+
+    const session = await getServerSession(authOptions);
+
+    // @ts-ignore
+    if (session?.user.admin === false) {
+      logger.error(
+        "User can't mail currently. Will enable the feature very soon",
+      );
+      return makeResponse(403, false, "Forbidden to send mail", null);
+    }
 
     // Parse JSON data from the request body
     const data = await req.json();

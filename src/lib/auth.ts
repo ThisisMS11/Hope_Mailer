@@ -80,8 +80,7 @@ export const authOptions: AuthOptions = {
         session.expires_at = token.expires_at;
         session.user = {
           ...session.user,
-          id: token.id, // Use `token.id` explicitly
-          username: token.username,
+          id: token.sub,
         };
 
         const user = await prisma.user.findUnique({

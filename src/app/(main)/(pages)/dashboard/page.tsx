@@ -3,7 +3,7 @@ import { EmployeeTable } from "@/components/EmployeeTable";
 import AddEmployeeDialog from "@/components/AddEmployeeDialog";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useEffect } from "react";
-
+import { useSession } from "next-auth/react";
 import { Plus, LayoutGrid, List, RotateCw, Mails } from "lucide-react";
 import FilterCheckBox from "@/components/FilterCheckBox";
 import EmailWorkflowRefactored from "@/components/EmailWorkflowRefactored";
@@ -34,6 +34,7 @@ const positions = [
 
 export default function Dashboard() {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const session = useSession();
 
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(false);
 
   const handleFilter = () => {
     console.log({ selectedCompanies, selectedPositions });
@@ -106,9 +108,14 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    console.log("useEffect 1");
+    const user = session.data?.user;
+    if (user) {
+      // @ts-ignore
+      setIsAdmin(user.admin);
+    }
+    console.log("useEffect 1", user);
     fetchContacts();
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     console.log("useEffect 2");
@@ -147,12 +154,14 @@ export default function Dashboard() {
                 >
                   Reset Filters <RotateCw />
                 </Button>
-                <Button
-                  onClick={handleColdEmailing}
-                  className="bg-teal-600 hover:bg-teal-700"
-                >
-                  Start Mailing <Mails />
-                </Button>
+                {isAdmin && (
+                  <Button
+                    onClick={handleColdEmailing}
+                    className="bg-teal-600 hover:bg-teal-700"
+                  >
+                    Start Mailing <Mails />
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-4">
                 <Button
