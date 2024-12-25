@@ -9,35 +9,14 @@ import FilterCheckBox from "@/components/FilterCheckBox";
 import EmailWorkflowRefactored from "@/components/EmailWorkflowRefactored";
 import axios from "axios";
 import { EmailWorkflowProvider } from "@/context/EmailWorkflow";
-const companies = [
-  "Google",
-  "Microsoft",
-  "Apple",
-  "Amazon",
-  "Netflix",
-  "Spotify",
-  "Meta",
-  "Tesla",
-  "Oracle",
-  "Salesforce",
-];
-
-const positions = [
-  "Manager",
-  "Senior SDE",
-  "SDE I",
-  "SDE II",
-  "SDE III",
-  "HR",
-  "Head",
-];
+import { positionType } from "@/utils/constants";
 
 export default function Dashboard() {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const session = useSession();
 
-  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const [selectedPositionTypes, setSelectedPositionTypes] = useState<any[]>([]);
+  const [selectedCompanies, setSelectedCompanies] = useState<any[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any>([]);
   const [allEmployees, setAllEmployees] = useState<any>([]);
   const [selectedEmployees, setSelectedEmployees] = useState<any>([]);
@@ -46,21 +25,23 @@ export default function Dashboard() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(false);
 
-  const handleFilter = () => {
-    console.log({ selectedCompanies, selectedPositions });
+  const [companies, setCompanies] = useState<any[]>([]);
 
-    if (selectedCompanies.length === 0 && selectedPositions.length === 0) {
+  const handleFilter = () => {
+    console.log({ selectedCompanies, selectedPositionTypes });
+
+    if (selectedCompanies.length === 0 && selectedPositionTypes.length === 0) {
       setFilteredEmployees(allEmployees);
       return;
     }
 
     const filtered = allEmployees.filter((employee: any) => {
       const matchesPosition =
-        selectedPositions.length === 0 ||
-        selectedPositions.includes(employee.position);
+        selectedPositionTypes.length === 0 ||
+        selectedPositionTypes.includes(employee.positionType);
       const matchesCompany =
         selectedCompanies.length === 0 ||
-        selectedCompanies.includes(employee.company);
+        selectedCompanies.includes(employee.company.name);
       return matchesPosition && matchesCompany && employee.valid;
     });
 
@@ -69,7 +50,7 @@ export default function Dashboard() {
 
   const handleResetFilters = () => {
     setSelectedCompanies([]);
-    setSelectedPositions([]);
+    setSelectedPositionTypes([]);
     setFilteredEmployees(allEmployees);
   };
 
@@ -107,20 +88,40 @@ export default function Dashboard() {
     }
   }
 
+  async function fetchCompanies() {
+    console.log("[Fetch Companies Called]");
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      const url = `${process.env.NEXT_PUBLIC_URL}/api/company`;
+      const response = await axios.get(url);
+
+      const resultCompanies = response.data.data;
+      // console.log(response.data.data);
+      setCompanies(resultCompanies);
+    } catch (error: any) {
+      setFetchError(
+        error?.response?.data?.message ||
+          "An error occurred while fetching employees.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     const user = session.data?.user;
     if (user) {
       // @ts-ignore
       setIsAdmin(user.admin);
     }
-    console.log("useEffect 1", user);
     fetchContacts();
+    fetchCompanies();
   }, [session]);
 
   useEffect(() => {
-    console.log("useEffect 2");
     handleFilter();
-  }, [selectedPositions, selectedCompanies]);
+  }, [selectedPositionTypes, selectedCompanies]);
 
   return (
     <>
@@ -143,10 +144,10 @@ export default function Dashboard() {
                   list={companies}
                 />
                 <FilterCheckBox
-                  filterName="Positions"
-                  selectedItems={selectedPositions}
-                  setSelectItems={setSelectedPositions}
-                  list={positions}
+                  filterName="Position Type"
+                  selectedItems={selectedPositionTypes}
+                  setSelectItems={setSelectedPositionTypes}
+                  list={positionType}
                 />
                 <Button
                   onClick={handleResetFilters}

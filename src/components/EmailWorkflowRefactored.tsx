@@ -95,7 +95,7 @@ const EmailWorkflow = ({
         const finalEmailSubject = personalizeEmailSubject(
           finalSubject,
           jobPosition,
-          employee.company,
+          employee.company.name,
         );
         const finalEmailContent = personalizeEmail(
           employee,

@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Linkedin } from "lucide-react";
+import Image from "next/image";
 
 export function EmployeeTable({
   employees,
@@ -89,8 +90,15 @@ export function EmployeeTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div>
-                    <div>{employee.company}</div>
+                  <div className="flex items-center">
+                    <Image
+                      src={employee.company.logo}
+                      alt={employee.company.name}
+                      width={26}
+                      height={26}
+                      className=" mr-2 rounded-sm"
+                    />
+                    <div>{employee.company.name}</div>
                   </div>
                 </TableCell>
                 <TableCell>{employee.mobile}</TableCell>
@@ -190,7 +198,7 @@ export function EmployeeTable({
           ))}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between px-4 py-2 border-t">
+      {/* <div className="flex items-center justify-between px-4 py-2 border-t">
         <div className="text-sm text-muted-foreground">58 employees</div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" disabled>
@@ -210,7 +218,7 @@ export function EmployeeTable({
             10
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

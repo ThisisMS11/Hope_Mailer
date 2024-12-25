@@ -38,7 +38,7 @@ function personalizeEmail(
     .replace("{{person}}", `${salutation} ${lastName}`)
     .replace("{{position}}", `${article} ${position}`)
     .replace("{{experience}}", experience || "")
-    .replace("{{company}}", company || "");
+    .replace("{{company}}", company.name || "");
 
   personalizedContent = personalizedContent
     .split("\n")

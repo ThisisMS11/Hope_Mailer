@@ -9,12 +9,13 @@ import {
   Input,
   Button,
 } from "@/imports/Shadcn_imports";
+import Image from "next/image";
 
 interface FilterCheckBoxProps {
   filterName: string;
-  selectedItems: string[];
-  setSelectItems: React.Dispatch<React.SetStateAction<string[]>>;
-  list: string[];
+  selectedItems: any;
+  setSelectItems: React.Dispatch<React.SetStateAction<any>>;
+  list: any;
 }
 
 const FilterCheckBox: React.FC<FilterCheckBoxProps> = ({
@@ -25,15 +26,17 @@ const FilterCheckBox: React.FC<FilterCheckBoxProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const toggleSelection = (item: string) => {
-    setSelectItems((prev) =>
-      prev.includes(item) ? prev.filter((c) => c !== item) : [...prev, item],
+  const toggleSelection = (item: any) => {
+    setSelectItems((prev: any) =>
+      prev.includes(item.name)
+        ? prev.filter((c: any) => c !== item.name)
+        : [...prev, item.name],
     );
   };
 
-  const filteredItems = list.filter((item) =>
-    item.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredItems = list.filter((item: any) => {
+    return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
     <DropdownMenu>
@@ -56,13 +59,26 @@ const FilterCheckBox: React.FC<FilterCheckBoxProps> = ({
           />
         </div>
         {filteredItems.length > 0 ? (
-          filteredItems.map((item) => (
+          filteredItems.map((item: any) => (
             <DropdownMenuCheckboxItem
-              key={item}
-              checked={selectedItems.includes(item)}
+              key={item.id}
+              checked={selectedItems.includes(item.name)}
               onCheckedChange={() => toggleSelection(item)}
             >
-              {item}
+              {item.logo ? (
+                <div className="flex items-center">
+                  <Image
+                    src={item.logo}
+                    alt={item.name}
+                    width={4}
+                    height={4}
+                    className="w-6 h-6 mr-2 rounded-full"
+                  />
+                  {item.name}
+                </div>
+              ) : (
+                item.name
+              )}
             </DropdownMenuCheckboxItem>
           ))
         ) : (

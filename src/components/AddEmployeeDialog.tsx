@@ -40,6 +40,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
 import { useRef } from "react";
+import { positionType, Gender } from "@/utils/constants";
+import AddEmployeeCompany from "@/components/AddEmployeeCompany";
 
 const DialogBox = ({
   buttonRef,
@@ -50,7 +52,8 @@ const DialogBox = ({
     firstName: "",
     lastName: "",
     position: "",
-    company: "",
+    positionType: "",
+    companyId: "",
     email: "",
     gender: "",
     mobile: "",
@@ -60,6 +63,7 @@ const DialogBox = ({
   });
 
   const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,10 +74,10 @@ const DialogBox = ({
     }));
   };
 
-  const handlePositionChange = (value: string) => {
+  const handlePositionTypeChange = (value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      position: value,
+      positionType: value,
     }));
   };
   const handleGenderChange = (value: string) => {
@@ -84,6 +88,7 @@ const DialogBox = ({
   };
 
   const handleSubmit = async () => {
+    console.log(formData);
     setLoading(true);
     try {
       const url = `${process.env.NEXT_PUBLIC_URL}/api/contacts`;
@@ -187,9 +192,10 @@ const DialogBox = ({
                           <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="not_know">not_know</SelectItem>
+                          {Gender &&
+                            Gender.map((g: string,index ) => {
+                              return <SelectItem key={index} value={g}>{g}</SelectItem>;
+                            })}
                         </SelectContent>
                       </Select>
                     </div>
@@ -214,36 +220,55 @@ const DialogBox = ({
                   <div className="flex items-center space-x-4">
                     <Briefcase className="text-gray-500" />
                     <div className="flex-1">
-                      <Label htmlFor="position">Position</Label>
+                      <Label htmlFor="positionType">Position Type</Label>
                       <Select
-                        onValueChange={handlePositionChange}
+                        onValueChange={handlePositionTypeChange}
                         defaultValue=""
-                        value={formData.position}
+                        value={formData.positionType}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select position" />
+                          <SelectValue placeholder="Select position Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="HR">HR</SelectItem>
-                          <SelectItem value="Senior HR">Senior HR</SelectItem>
-                          <SelectItem value="Manager">Manager</SelectItem>
-                          <SelectItem value="Senior SDE">Senior SDE</SelectItem>
-                          <SelectItem value="Junior SDE">Junior SDE</SelectItem>
+                          {positionType &&
+                            positionType.map((position: any,index) => {
+                              return (
+                                <SelectItem key={index} value={position.name}>
+                                  {position.name}
+                                </SelectItem>
+                              );
+                            })}
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
+
                   <div className="flex items-center space-x-4">
                     <Briefcase className="text-gray-500" />
                     <div className="flex-1">
-                      <Label htmlFor="company">Company</Label>
+                      <Label htmlFor="position">Position Name</Label>
                       <Input
-                        id="company"
-                        placeholder="Enter company"
-                        name="company"
-                        value={formData.company}
+                        id="position"
                         onChange={handleChange}
+                        name="position"
+                        placeholder="Enter Position Name"
+                        defaultValue=""
+                        value={formData.position}
                       />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Briefcase className="text-gray-500" />
+                    <div className="flex items-center">
+                      <Label htmlFor="company" className="mr-4">
+                        Company
+                      </Label>
+                      <AddEmployeeCompany
+                        formData={formData}
+                        setFormData={setFormData}
+                      />
+                      <div></div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">

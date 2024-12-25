@@ -21,8 +21,9 @@ export const POST = async (req: NextRequest) => {
       mobile,
       linkedIn,
       email,
-      company,
+      companyId,
       position,
+      positionType,
       experience,
     } = body;
 
@@ -37,8 +38,9 @@ export const POST = async (req: NextRequest) => {
       !gender ||
       !mobile ||
       !email ||
-      !company ||
+      !companyId ||
       !position ||
+      !positionType ||
       !userId
     ) {
       logger.error("Missing required fields.");
@@ -63,8 +65,9 @@ export const POST = async (req: NextRequest) => {
         mobile,
         linkedIn,
         email,
-        company,
+        companyId,
         position,
+        positionType,
         experience,
         userId,
       },
@@ -113,7 +116,10 @@ export const GET = async (req: NextRequest) => {
       const userId = session?.user?.id;
       logger.info(`UserId inside the session is ${userId}`);
 
-      const contacts = await prisma.contact.findMany({ where: { userId } });
+      const contacts = await prisma.contact.findMany({
+        where: { userId },
+        include: { company: true },
+      });
       logger.info("Contacts retrieved successfully.");
       return makeResponse(
         200,

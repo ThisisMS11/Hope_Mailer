@@ -69,6 +69,14 @@ enum Gender {
 }
 
 
+enum PositionType {
+  Talent
+  Engineering
+  Manager
+  Head
+  Others
+}
+
 model Contact {
   id            String        @id @default(cuid())
   firstName  String
@@ -77,8 +85,9 @@ model Contact {
   mobile     String
   linkedIn   String?
   email      String   @unique
-  company    String
+  companyId  String            @default("cm53ry4am0000ei0vghc2y6xk")
   position   String
+  positionType PositionType    @default(Others)
   experience Int
   valid      Boolean   @default(true)
   userId     String      
@@ -86,4 +95,14 @@ model Contact {
   updatedAt  DateTime @updatedAt
 
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company    Company  @relation(fields: [companyId], references: [id])
+}
+
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String?
+  logo      String?
+  contacts  Contact[]
 }
