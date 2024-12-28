@@ -10,16 +10,13 @@ export const POST = async (req: NextRequest) => {
     const body = await req.json();
     const { name, domain, logo } = body;
 
-    if (!name || !domain || !logo) {
-      logger.error("Missing required fields: name, domain, or logo.");
-      return makeResponse(
-        400,
-        false,
-        "Missing required fields: name, domain, or logo.",
-        null,
-      );
+    // Validate required fields
+    if (!name) {
+      logger.error("Missing required fields: name");
+      return makeResponse(400, false, "Missing required field: name.", null);
     }
 
+    // Format name
     const formattedName = name
       .split(" ")
       .map(
@@ -28,12 +25,17 @@ export const POST = async (req: NextRequest) => {
       )
       .join(" ");
 
+    // Prepare data for creation, excluding undefined optional fields
+    const companyData: { name: string; domain?: string; logo?: string } = {
+      name: formattedName,
+    };
+
+    if (domain) companyData.domain = domain;
+    if (logo) companyData.logo = logo;
+
+    // Create company in database
     const company = await prisma.company.create({
-      data: {
-        name: formattedName,
-        domain,
-        logo,
-      },
+      data: companyData,
     });
 
     logger.info("Company created successfully.");

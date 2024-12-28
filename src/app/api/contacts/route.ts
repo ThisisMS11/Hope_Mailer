@@ -9,7 +9,6 @@ const logger = createLoggerWithLabel("CONTACTS");
 
 // CREATE
 export const POST = async (req: NextRequest) => {
-  // ISSUE : not getting id is session user.
   const session = await getServerSession(authOptions);
 
   try {
@@ -36,7 +35,6 @@ export const POST = async (req: NextRequest) => {
       !firstName ||
       !lastName ||
       !gender ||
-      !mobile ||
       !email ||
       !companyId ||
       !position ||

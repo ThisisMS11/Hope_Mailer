@@ -10,6 +10,7 @@ import {
   Button,
 } from "@/imports/Shadcn_imports";
 import Image from "next/image";
+import { Building2 } from "lucide-react";
 
 interface FilterCheckBoxProps {
   filterName: string;
@@ -65,15 +66,19 @@ const FilterCheckBox: React.FC<FilterCheckBoxProps> = ({
               checked={selectedItems.includes(item.name)}
               onCheckedChange={() => toggleSelection(item)}
             >
-              {item.logo ? (
+              {filterName === "Companies" ? (
                 <div className="flex items-center">
-                  <Image
-                    src={item.logo}
-                    alt={item.name}
-                    width={4}
-                    height={4}
-                    className="w-6 h-6 mr-2 rounded-full"
-                  />
+                  {item.logo ? (
+                    <Image
+                      src={item.logo}
+                      alt={item.name}
+                      width={4}
+                      height={4}
+                      className="w-6 h-6 mr-2 rounded-full"
+                    />
+                  ) : (
+                    <Building2 className="w-6 h-6 mr-2 rounded-full" />
+                  )}
                   {item.name}
                 </div>
               ) : (

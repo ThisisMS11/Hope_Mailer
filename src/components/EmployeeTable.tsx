@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Linkedin } from "lucide-react";
 import Image from "next/image";
-
+import { Building2 } from "lucide-react";
 export function EmployeeTable({
   employees,
   setSelectedEmployees,
@@ -29,6 +29,8 @@ export function EmployeeTable({
   setSelectedEmployees: React.Dispatch<React.SetStateAction<any[]>>;
 }) {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+  console.log(employees);
 
   const handleCheckboxChange = (employee: any, isChecked: boolean) => {
     setSelectedEmployees((prevSelected) => {
@@ -83,7 +85,7 @@ export function EmployeeTable({
                 </TableCell>
                 <TableCell>
                   <div>
-                    <div>{employee.position}</div>
+                    <div>{employee.position ? employee.position : "NA"}</div>
                     <div className="text-sm text-muted-foreground">
                       {employee.experience + "years"}
                     </div>
@@ -91,17 +93,23 @@ export function EmployeeTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    <Image
-                      src={employee.company.logo}
-                      alt={employee.company.name}
-                      width={26}
-                      height={26}
-                      className=" mr-2 rounded-sm"
-                    />
+                    {employee.company.logo ? (
+                      <Image
+                        src={employee.company.logo}
+                        alt={employee.company.name}
+                        width={26}
+                        height={26}
+                        className=" mr-2 rounded-sm"
+                      />
+                    ) : (
+                      <Building2 className=" mr-2 rounded-sm" />
+                    )}
                     <div>{employee.company.name}</div>
                   </div>
                 </TableCell>
-                <TableCell>{employee.mobile}</TableCell>
+                <TableCell>
+                  {employee.mobile ? employee.mobile : "NA"}
+                </TableCell>
                 <TableCell>
                   <div>
                     <div>{employee.email}</div>
@@ -173,7 +181,11 @@ export function EmployeeTable({
                           <label className="text-sm text-muted-foreground">
                             Experience
                           </label>
-                          <Select defaultValue={employee.experience}>
+                          <Select
+                            defaultValue={
+                              employee.experience ? employee.experience : 1
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>

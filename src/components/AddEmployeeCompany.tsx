@@ -10,13 +10,14 @@ import {
   Button,
 } from "@/imports/Shadcn_imports";
 import Image from "next/image";
+import { Building2 } from "lucide-react";
 
 const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [companies, setCompanies] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<any>({});
-  const [isAdding, setIsAdding] = useState(false);
+  // const [isAdding, setIsAdding] = useState(false);
 
   // Fetch companies from the database on mount
   useEffect(() => {
@@ -61,21 +62,30 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
     }
   };
 
-  const toggleSelection = async (item: any) => {
-    if (!companies.some((company) => company.id === item.id)) {
-      const addToDB = confirm(`${item.name} is not in the database. Add it?`);
+  const toggleSelection = async (item?: any) => {
+    const companyName = item?.name || searchTerm;
+
+    if (!companyName) {
+      console.error("No company name provided.");
+      return;
+    }
+
+    const isCompanyInDB = companies.some((company) => company.id === item?.id);
+
+    if (!isCompanyInDB) {
+      const addToDB = confirm(`${companyName} is not in the database. Add it?`);
 
       if (addToDB) {
-        setIsAdding(true);
+        // setIsAdding(true);
         try {
           const url = `${process.env.NEXT_PUBLIC_URL}/api/company`;
           const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              name: item.name,
-              domain: item.domain,
-              logo: item.logo,
+              name: companyName,
+              domain: item?.domain || "", // Optional field
+              logo: item?.logo || "", // Optional field
             }),
           });
           const newCompany = await response.json();
@@ -94,13 +104,22 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
           setSelectedCompany(newCompanyData);
         } catch (error) {
           console.error("Failed to add company to the database", error);
-        } finally {
-          setIsAdding(false);
         }
       }
     } else {
-      setFormData((prev: any) => ({ ...prev, companyId: item.id }));
-      setSelectedCompany(item);
+      // Use fallback for existing company
+      const selectedCompany =
+        item || companies.find((company) => company.name === searchTerm);
+
+      if (selectedCompany) {
+        setFormData((prev: any) => ({
+          ...prev,
+          companyId: selectedCompany.id,
+        }));
+        setSelectedCompany(selectedCompany);
+      } else {
+        console.error("Company not found in the database.");
+      }
     }
   };
 
@@ -110,14 +129,20 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
         <Button variant="outline">
           {formData.company !== "" ? (
             <>
-              <Image
-                src={selectedCompany.logo}
-                alt={selectedCompany.name}
-                width={24}
-                height={24}
-                className="w-6 h-6 rounded-full"
-              />
-              {selectedCompany.name} Selected
+              {selectedCompany.logo ? (
+                <Image
+                  src={selectedCompany.logo}
+                  alt={selectedCompany.name}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 rounded-full"
+                />
+              ) : (
+                <Building2 />
+              )}
+              {selectedCompany.name
+                ? selectedCompany.name + "Selected"
+                : "Select Company"}
             </>
           ) : (
             `Select Company`
@@ -135,6 +160,7 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
             className="mb-2"
           />
         </div>
+
         {filteredItems.length > 0 ? (
           filteredItems.map((item: any) => (
             <DropdownMenuCheckboxItem
@@ -142,8 +168,8 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
               checked={selectedCompany.name === item.name}
               onCheckedChange={() => toggleSelection(item)}
             >
-              {item.logo ? (
-                <div className="flex items-center">
+              <div className="flex items-center">
+                {item.logo ? (
                   <Image
                     src={item.logo}
                     alt={item.name}
@@ -151,15 +177,18 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
                     height={24}
                     className="w-6 h-6 mr-2 rounded-full"
                   />
-                  {item.name}
-                </div>
-              ) : (
-                item.name
-              )}
+                ) : (
+                  <Building2 className="w-6 h-6 mr-2 rounded-full" />
+                )}
+                {item.name}
+              </div>
             </DropdownMenuCheckboxItem>
           ))
         ) : (
-          <div className="p-2 text-sm text-gray-500">No results found</div>
+          <div className="p-2 text-sm text-gray-500">
+            {" "}
+            <Button onClick={toggleSelection}>click to add this one ?</Button>
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

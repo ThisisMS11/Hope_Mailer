@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import {
   Loader2,
   User,
@@ -11,6 +12,7 @@ import {
   Linkedin,
   MapPin,
   Repeat,
+  ShieldAlert,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,9 +27,11 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -45,8 +49,10 @@ import AddEmployeeCompany from "@/components/AddEmployeeCompany";
 
 const DialogBox = ({
   buttonRef,
+  fetchContacts,
 }: {
   buttonRef: React.RefObject<HTMLButtonElement>;
+  fetchContacts: any;
 }) => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -87,15 +93,26 @@ const DialogBox = ({
     }));
   };
 
+  /* Handles adding a new employee to database */
   const handleSubmit = async () => {
-    console.log(formData);
+    // console.log(formData);
     setLoading(true);
     try {
       const url = `${process.env.NEXT_PUBLIC_URL}/api/contacts`;
       const response = await axios.post(url, formData);
       console.log(response.data);
+      toast.success("New Employee added successfully", {
+        duration: 3000,
+      });
+
+      /* refreshing contacts to see changes on screen */
+      fetchContacts();
     } catch (error) {
       console.error(`Some error happened while creating employee : ${error}`);
+      toast.error("Error while creating new employee", {
+        duration: 3000,
+        icon: <ShieldAlert size={20} color="red" />,
+      });
     }
     setLoading(false);
     if (closeRef.current) closeRef.current.click();
@@ -109,7 +126,8 @@ const DialogBox = ({
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent aria-describedby="dialog-content">
+        <DialogTitle className="hidden">useless title</DialogTitle>
         <Card>
           <CardHeader>
             <CardTitle>Add New User</CardTitle>
@@ -193,8 +211,12 @@ const DialogBox = ({
                         </SelectTrigger>
                         <SelectContent>
                           {Gender &&
-                            Gender.map((g: string,index ) => {
-                              return <SelectItem key={index} value={g}>{g}</SelectItem>;
+                            Gender.map((g: string, index) => {
+                              return (
+                                <SelectItem key={index} value={g}>
+                                  {g}
+                                </SelectItem>
+                              );
                             })}
                         </SelectContent>
                       </Select>
@@ -231,7 +253,7 @@ const DialogBox = ({
                         </SelectTrigger>
                         <SelectContent>
                           {positionType &&
-                            positionType.map((position: any,index) => {
+                            positionType.map((position: any, index) => {
                               return (
                                 <SelectItem key={index} value={position.name}>
                                   {position.name}

@@ -1,4 +1,5 @@
 "use client";
+import { useCallback } from "react";
 import { EmployeeTable } from "@/components/EmployeeTable";
 import AddEmployeeDialog from "@/components/AddEmployeeDialog";
 import { Button } from "@/components/ui/button";
@@ -23,12 +24,11 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(false);
 
   const [companies, setCompanies] = useState<any[]>([]);
 
   const handleFilter = () => {
-    console.log({ selectedCompanies, selectedPositionTypes });
+    // console.log({ selectedCompanies, selectedPositionTypes });
 
     if (selectedCompanies.length === 0 && selectedPositionTypes.length === 0) {
       setFilteredEmployees(allEmployees);
@@ -65,7 +65,9 @@ export default function Dashboard() {
     }
   };
 
-  async function fetchContacts() {
+  /* For fetching the contacts */
+
+  const fetchContacts = useCallback(async () => {
     console.log("[Fetch contacts Called]");
     setIsLoading(true);
     setFetchError(null);
@@ -86,38 +88,32 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  }
-
-  async function fetchCompanies() {
-    console.log("[Fetch Companies Called]");
-    setIsLoading(true);
-    setFetchError(null);
-    try {
-      const url = `${process.env.NEXT_PUBLIC_URL}/api/company`;
-      const response = await axios.get(url);
-
-      const resultCompanies = response.data.data;
-      // console.log(response.data.data);
-      setCompanies(resultCompanies);
-    } catch (error: any) {
-      setFetchError(
-        error?.response?.data?.message ||
-          "An error occurred while fetching employees.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  }, []);
 
   useEffect(() => {
-    const user = session.data?.user;
-    if (user) {
-      // @ts-ignore
-      setIsAdmin(user.admin);
+    async function fetchCompanies() {
+      console.log("[Fetch Companies Called]");
+      setIsLoading(true);
+      setFetchError(null);
+      try {
+        const url = `${process.env.NEXT_PUBLIC_URL}/api/company`;
+        const response = await axios.get(url);
+
+        const resultCompanies = response.data.data;
+        setCompanies(resultCompanies);
+      } catch (error: any) {
+        setFetchError(
+          error?.response?.data?.message ||
+            "An error occurred while fetching employees.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
     }
+
     fetchContacts();
     fetchCompanies();
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     handleFilter();
@@ -155,7 +151,8 @@ export default function Dashboard() {
                 >
                   Reset Filters <RotateCw />
                 </Button>
-                {isAdmin && (
+                {/* @ts-ignore  */}
+                {session?.data?.user?.admin && (
                   <Button
                     onClick={handleColdEmailing}
                     className="bg-teal-600 hover:bg-teal-700"
@@ -197,7 +194,10 @@ export default function Dashboard() {
             />
           </>
         )}
-        <AddEmployeeDialog buttonRef={buttonRef} />
+        <AddEmployeeDialog
+          buttonRef={buttonRef}
+          fetchContacts={fetchContacts}
+        />
       </div>
 
       {selectedEmployees.length > 0 && (

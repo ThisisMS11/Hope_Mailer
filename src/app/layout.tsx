@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EmployeeSidebar } from "@/components/EmployeeSideBar";
 // import ThemeToggler from "@/components/ThemeToggler";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -10,8 +11,8 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LiveMe",
-  description: "Will make you go live.",
+  title: "HopeMailer",
+  description: "Mail like a pro",
 };
 
 export default function RootLayout({
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "min-h-screen")}>
+        <Toaster />
         <SidebarProvider>
           <div className="flex min-h-screen w-full">
             <EmployeeSidebar />

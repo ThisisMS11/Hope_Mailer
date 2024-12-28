@@ -1,0 +1,32 @@
+declare module "lucide-react" {
+  export const Loader2: any;
+  export const User: any;
+  export const Briefcase: any;
+  export const Mail: any;
+  export const Phone: any;
+  export const Clock: any;
+  export const Linkedin: any;
+  export const MapPin: any;
+  export const Repeat: any;
+  export const Plus: any;
+  export const LayoutGrid: any;
+  export const List: any;
+  export const RotateCw: any;
+  export const Mails: any;
+  export const CircleX: any;
+  export const Loader: any;
+  export const Home: any;
+  export const Pencil: any;
+  export const Moon: any;
+  export const Sun: any;
+  export const Check: any;
+  export const X: any;
+  export const ChevronRight: any;
+  export const Circle: any;
+  export const ChevronDown: any;
+  export const ChevronUp: any;
+  export const PanelLeft: any;
+  export const Building2: any;
+
+  export const ShieldAlert: any;
+}
