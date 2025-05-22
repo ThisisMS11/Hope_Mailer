@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
-import { Home } from "lucide-react";
+import { Home, LayoutTemplate } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarHeader,
@@ -12,8 +13,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+const sideBarOptions = [
+  {
+    name: 'Dashboard',
+    url: '/dashboard',
+    icon: <Home className="h-4 w-4" />
+  },
+  {
+    name: 'Templates',
+    url: '/templates',
+    icon: <LayoutTemplate className="h-4 w-4" />
+  },
+]
+
 export function EmployeeSidebar() {
   const { open, setOpen } = useSidebar();
+  const router = useRouter();
 
   useEffect(() => {
     setOpen(false);
@@ -30,18 +45,21 @@ export function EmployeeSidebar() {
             {open && (
               <span className="font-semibold hidden lg:inline">Workplace</span>
             )}{" "}
-            {/* Add this line */}
           </div>
         </div>
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          <SidebarMenuItem className="flex justify-center">
-            <SidebarMenuButton tooltip="Dashboard" className="pl-4">
-              <Home className="h-4 w-4" />
-              <span>Dashboard</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {
+            sideBarOptions.map((option) => {
+              return <SidebarMenuItem className="flex justify-center">
+                <SidebarMenuButton tooltip={option.name} className="pl-4" onClick={() => { router.push(option.url) }} >
+                  {option.icon}
+                  <span>{option.name}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            })
+          }
         </SidebarMenu>
       </SidebarGroupContent>
       <SidebarRail />

@@ -24,21 +24,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(inter.className, "min-h-screen")}>
         <Toaster />
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            <EmployeeSidebar />
-            <Providers>
-              <main className="flex-1">
-                <div className="p-4">
-                  <SidebarTrigger />
-                  {/* <ThemeToggler /> */}
+        <div className="flex min-h-screen w-full">
+          <Providers>
+            <main className="flex-1">
+              <div className="p-4">
+                {/* <ThemeToggler /> */}
 
-                  {children}
-                </div>
-              </main>
-            </Providers>
-          </div>
-        </SidebarProvider>
+                {children}
+              </div>
+            </main>
+          </Providers>
+        </div>
       </body>
     </html>
   );
