@@ -27,6 +27,10 @@ declare module "lucide-react" {
   export const ChevronUp: any;
   export const PanelLeft: any;
   export const Building2: any;
-
+  export const Funnel: any;
   export const ShieldAlert: any;
+  export const MoreHorizontal: any;
+  export const Edit: any;
+  export const Trash2: any;
+  export const AlertTriangle: any;
 }

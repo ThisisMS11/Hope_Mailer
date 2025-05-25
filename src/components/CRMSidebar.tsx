@@ -65,7 +65,9 @@ export default function CRMSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Contacts</SidebarGroupLabel>
+          <SidebarGroupLabel className={"font-open-sans"}>
+            Contacts
+          </SidebarGroupLabel>
           <SidebarGroupAction title="Add Project">
             <Plus /> <span className="sr-only">Add Project</span>
           </SidebarGroupAction>
