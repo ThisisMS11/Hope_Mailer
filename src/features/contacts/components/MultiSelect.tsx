@@ -8,7 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { Image } from "@/imports/Nextjs_imports";
-
+import {FilterI} from "@/features/contacts/types";
+import {FilterTypeEnum} from '@/enums/enums'
 export interface optionI {
   id?: any;
   key: string;
@@ -19,15 +20,30 @@ export interface optionI {
 interface MultiSelectProps {
   filterName: string;
   options: optionI[];
+  setFilters : React.Dispatch<React.SetStateAction<FilterI>>;
 }
 
-const MultiSelect: React.FC<MultiSelectProps> = ({ filterName, options }) => {
+const MultiSelect: React.FC<MultiSelectProps> = ({ filterName, options, setFilters}) => {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   const handleCheckboxChange = (value: string) => {
     setSelectedValues((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+        prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
+
+    setFilters((prev) => {
+      if (!prev) return prev;
+
+      const currentValues = prev[filterName as keyof FilterI] as string[];
+      const updatedValues = currentValues.includes(value)
+          ? currentValues.filter((v) => v !== value)
+          : [...currentValues, value];
+
+      return {
+        ...prev,
+        [filterName]: updatedValues,
+      };
+    });
   };
 
   // Get display text for selected items
@@ -39,7 +55,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({ filterName, options }) => {
           .join(", ")
       : `Select ${filterName}`;
 
-  const isCompanyFilter = filterName === "companyFilter";
+  const isCompanyFilter = filterName === FilterTypeEnum.COMPANY_NAME;
 
   return (
     <Popover>

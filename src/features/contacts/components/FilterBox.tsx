@@ -11,15 +11,23 @@ import { ChevronDown, LayoutGrid, List, Funnel } from "lucide-react";
 import MultiSelect from "@/features/contacts/components/MultiSelect";
 import { positionType } from "@/utils/constants";
 import { mockCompanies } from "@/mock/contacts.mock";
+import {FilterI} from "@/features/contacts/types";
+import {FilterTypeEnum} from '@/enums/enums'
 
-export default function FilterBox() {
+interface FilterBoxProps {
+    setFilters : React.Dispatch<React.SetStateAction<FilterI>>;
+    // filters : FilterI;
+    applyFilters : () => void;
+}
+
+const  FilterBox : React.FC<FilterBoxProps> = ({setFilters, applyFilters})=> {
   const [view, setView] = useState<"grid" | "list">("grid");
 
   return (
     <div className="flex items-center justify-between gap-3 bg-white dark:bg-secondary p-3 rounded-2xl shadow-sm w-full">
-      <MultiSelect filterName={"Position"} options={positionType} />
+      <MultiSelect filterName={FilterTypeEnum.POSITION_TYPE} options={positionType} setFilters={setFilters} />
 
-      <MultiSelect filterName={"companyFilter"} options={mockCompanies} />
+      <MultiSelect filterName={FilterTypeEnum.COMPANY_NAME} options={mockCompanies} setFilters={setFilters} />
 
       {/* More Dropdown */}
       <DropdownMenu>
@@ -40,7 +48,7 @@ export default function FilterBox() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Button> Apply Filters </Button>
+      <Button onClick={applyFilters}> Apply Filters </Button>
 
       <div className="flex-1" />
 
@@ -74,3 +82,4 @@ export default function FilterBox() {
     </div>
   );
 }
+export default FilterBox;
