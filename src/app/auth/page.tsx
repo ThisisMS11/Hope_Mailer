@@ -1,14 +1,23 @@
-import { getServerSession } from "next-auth";
-import SignIn from "@/components/SignIn";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+"use client";
+import { LoginForm } from "@/features/authentication/components/LoginForm";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "@/imports/Nextjs_imports";
 
-const SigninPage = async () => {
-  const session = await getServerSession(authOptions);
-  if (session) {
-    redirect("/dashboard");
+const SigninPage = () => {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  if (user != null) {
+    router.push("/dashboard");
   }
-  return <SignIn />;
+
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
+    </div>
+  );
 };
 
 export default SigninPage;

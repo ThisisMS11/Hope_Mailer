@@ -1,5 +1,5 @@
-const Main = () =>{
-    return <div> this is my templates component component </div>
-}
+const Main = () => {
+  return <div> this is my templates component component </div>;
+};
 
 export default Main;

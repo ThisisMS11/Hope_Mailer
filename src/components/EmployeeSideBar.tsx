@@ -15,16 +15,16 @@ import {
 
 const sideBarOptions = [
   {
-    name: 'Dashboard',
-    url: '/dashboard',
-    icon: <Home className="h-4 w-4" />
+    name: "Dashboard",
+    url: "/dashboard",
+    icon: <Home className="h-4 w-4" />,
   },
   {
-    name: 'Templates',
-    url: '/templates',
-    icon: <LayoutTemplate className="h-4 w-4" />
+    name: "Templates",
+    url: "/templates",
+    icon: <LayoutTemplate className="h-4 w-4" />,
   },
-]
+];
 
 export function EmployeeSidebar() {
   const { open, setOpen } = useSidebar();
@@ -50,16 +50,22 @@ export function EmployeeSidebar() {
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          {
-            sideBarOptions.map((option) => {
-              return <SidebarMenuItem className="flex justify-center">
-                <SidebarMenuButton tooltip={option.name} className="pl-4" onClick={() => { router.push(option.url) }} >
+          {sideBarOptions.map((option) => {
+            return (
+              <SidebarMenuItem className="flex justify-center">
+                <SidebarMenuButton
+                  tooltip={option.name}
+                  className="pl-4"
+                  onClick={() => {
+                    router.push(option.url);
+                  }}
+                >
                   {option.icon}
                   <span>{option.name}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            })
-          }
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
       <SidebarRail />
