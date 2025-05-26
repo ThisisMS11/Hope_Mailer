@@ -1,4 +1,4 @@
-import {FilterTypeEnum, GenderEnum, PositionTypeEnum} from "@/enums/enums";
+import { FilterTypeEnum, GenderEnum, PositionTypeEnum } from "@/enums/enums";
 
 export interface ContactI {
   id: number;
@@ -23,9 +23,8 @@ export interface CompanyResponseI {
   logo: string;
 }
 
-
 export interface FilterI {
   [FilterTypeEnum.POSITION_TYPE]: string[];
   [FilterTypeEnum.COMPANY_NAME]: string[];
-  [FilterTypeEnum.IS_VALID] : boolean;
+  [FilterTypeEnum.IS_VALID]: boolean;
 }

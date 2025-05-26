@@ -1,4 +1,4 @@
-import {PositionTypeEnum} from "@/enums/enums";
+import { PositionTypeEnum } from "@/enums/enums";
 
 export const positionType = [
   { id: "pt1", key: "Talent", value: PositionTypeEnum.TALENT },

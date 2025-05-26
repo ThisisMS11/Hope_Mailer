@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { ContactI} from "@/features/contacts/types";
+import { ContactI } from "@/features/contacts/types";
 import { optionI } from "@/features/contacts/components/MultiSelect";
 import { PositionTypeEnum, GenderEnum } from "@/enums/enums";
 
@@ -8,7 +8,7 @@ const positionTypes = [
   PositionTypeEnum.ENGINEERING,
   PositionTypeEnum.MANAGER,
   PositionTypeEnum.HEAD,
-  PositionTypeEnum.OTHERS
+  PositionTypeEnum.OTHERS,
 ] as const;
 
 export const mockCompanies: optionI[] = [
@@ -44,7 +44,6 @@ export const mockCompanies: optionI[] = [
   },
 ];
 
-
 export const generateMockContact = (): ContactI => {
   const company = faker.helpers.arrayElement(mockCompanies);
 
@@ -57,12 +56,13 @@ export const generateMockContact = (): ContactI => {
     linkedIn: faker.internet.url(),
     email: faker.internet.email(),
     position: faker.person.jobTitle(),
-    positionType: positionTypes[Math.floor(Math.random() * positionTypes.length)],
+    positionType:
+      positionTypes[Math.floor(Math.random() * positionTypes.length)],
     experience: faker.number.int({ min: 0, max: 10 }),
     valid: faker.datatype.boolean(),
     companyId: company.id,
     companyName: company.key,
-    logo: company.logo ?? ""
+    logo: company.logo ?? "",
   };
 };
 
@@ -77,7 +77,7 @@ export const generateMockCompanies = (): optionI => {
 };
 
 export const mockContacts: ContactI[] = Array.from(
-  { length: 10 },
+  { length: 30 },
   generateMockContact,
 );
 

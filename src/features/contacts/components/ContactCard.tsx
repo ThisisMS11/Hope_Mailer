@@ -38,12 +38,16 @@ interface ContactCardProps {
   contact: ContactI;
   onContactUpdate?: (updatedContact: ContactI) => void;
   onContactDelete?: (contactId: number) => void;
+  isChecked?: boolean;
+  onCheckChange?: (contactId: number, isChecked: boolean) => void;
 }
 
 const ContactCard: React.FC<ContactCardProps> = ({
   contact,
   onContactUpdate,
   onContactDelete,
+  isChecked = false,
+  onCheckChange,
 }) => {
   // Calculate a fake progress percentage
   const progressPercentage = Math.floor(contact.experience * 10);
@@ -76,12 +80,20 @@ const ContactCard: React.FC<ContactCardProps> = ({
     setIsDeleteModalOpen(false);
   };
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onCheckChange) {
+      onCheckChange(contact.id, e.target.checked);
+    }
+  };
+
   return (
     <div className="relative w-64 rounded-2xl shadow-md p-4 pt-6 flex flex-col items-center bg-white dark:bg-[#16151c]">
       {/* Checkbox - Top Left */}
       <label className="absolute top-3 left-3 w-4 h-4 inline-flex items-start">
         <input
           type="checkbox"
+          checked={isChecked}
+          onChange={handleCheckboxChange}
           className="
       peer
       appearance-none

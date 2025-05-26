@@ -11,7 +11,7 @@ export default function DashboardLayout({
   children: React.ReactElement;
 }) {
   return (
-    <div>
+    <div className={"bg-white"}>
       <NavigationProvider>
         <SidebarProvider>
           <CRMSidebar />

@@ -33,4 +33,6 @@ declare module "lucide-react" {
   export const Edit: any;
   export const Trash2: any;
   export const AlertTriangle: any;
+  export const SendHorizontal: any;
+  export const Send: any;
 }
