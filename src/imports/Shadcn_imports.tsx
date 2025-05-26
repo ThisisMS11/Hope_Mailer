@@ -59,3 +59,5 @@ export {
 } from "@/components/ui/tooltip";
 
 export { Skeleton } from "@/components/ui/skeleton";
+
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

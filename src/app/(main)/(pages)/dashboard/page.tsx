@@ -1,6 +1,6 @@
 "use client";
 import Contact from "@/features/contacts/components/Contact";
-import Email from "@/features/emails/Email";
+import Email from "@/features/emails/templates/components/TemplatesPanel";
 import { useNavigation } from "@/context/NavigationContext";
 
 export default function Dashboard() {

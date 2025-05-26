@@ -12,7 +12,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ChevronDown, ChevronUp, Mail, Plus, User } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  Plus,
+  User,
+  BookDashed,
+  File,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,10 +121,48 @@ export default function CRMSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+
+              <SidebarMenuItem className="border-b-1">
+                <SidebarMenuButton asChild>
+                  <Link
+                    href="/dashboard/emails/templates"
+                    className={
+                      pathname === "/dashboard/emails/templates"
+                        ? "bg-muted text-primary font-medium rounded-md"
+                        : ""
+                    }
+                  >
+                    <BookDashed className="h-4 w-4 mr-2" />
+                    <span>Templates</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem className="border-b-1">
+                <SidebarMenuButton asChild>
+                  <Link
+                    href="/dashboard/files"
+                    className={
+                      pathname === "/dashboard/files"
+                        ? "bg-muted text-primary font-medium rounded-md"
+                        : ""
+                    }
+                  >
+                    <File className="h-4 w-4 mr-2" />
+                    <span>Files</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>

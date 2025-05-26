@@ -35,4 +35,16 @@ declare module "lucide-react" {
   export const AlertTriangle: any;
   export const SendHorizontal: any;
   export const Send: any;
+  export const BookDashed: any;
+  export const Save: any;
+  export const File: any;
+  export const FileUp: any;
+  export const Download: any;
+  export const Image: any;
+  export const FileText: any;
+  export const Video: any;
+  export const ExternalLink: any;
+  export const X: any;
+  export const FileImage: any;
+  export const Link: any;
 }
