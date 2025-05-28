@@ -1,6 +1,6 @@
 "use client";
 import { LoginForm } from "@/features/authentication/components/LoginForm";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/features/authentication/hooks/useAuth";
 import { useRouter } from "@/imports/Nextjs_imports";
 
 const SigninPage = () => {

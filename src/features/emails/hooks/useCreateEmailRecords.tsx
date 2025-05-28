@@ -1,0 +1,54 @@
+import { queryClient } from "@/lib/queryClient";
+import { useMutation } from "@tanstack/react-query";
+import { ResponseBody } from "@/types";
+import { EmailList, EmailRecordRequestBody } from "@/features/emails/types";
+import { createEmailApiFunc } from "@/api/email";
+import { QUERY_KEYS } from "@/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+
+const formSchema = z.object({
+  subject: z.string().min(5, "Subject is required"),
+  body: z.string().min(5, "Body is required"),
+  scheduledTime: z.number().min(0, "Scheduled time must be a positive number"),
+  additionalData: z.object({
+    internshipLink: z.string().url("Invalid URL").optional(),
+    coverLetterLink: z.string().url("Invalid URL").optional(),
+    resumeLink: z.string().url("Invalid URL").optional(),
+  }),
+  attachmentIds: z.array(z.string()).optional(),
+  contactIds: z.array(z.string()).min(1, "At least one Contact is required"),
+});
+
+export const useCreateEmailRecords = () => {
+  const initialValues = {
+    subject: "",
+    body: "",
+    scheduledTime: 0,
+    additionalData: { internshipLink: "", coverLetterLink: "", resumeLink: "" },
+    attachmentIds: [],
+    contactIds: [],
+  };
+
+  const emailFormData = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: initialValues,
+  });
+
+  const requestCreateEmailRecords = useMutation<
+    ResponseBody<EmailList>,
+    Error,
+    EmailRecordRequestBody
+  >({
+    mutationFn: async (body) => createEmailApiFunc(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EMAILS] });
+    },
+    onError: (error: Error) => {
+      console.error(error);
+    },
+  });
+
+  return { emailFormData, requestCreateEmailRecords };
+};

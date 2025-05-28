@@ -23,7 +23,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "@/imports/Nextjs_imports";
 import { useRouter } from "@/imports/Nextjs_imports";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/features/authentication/hooks/useAuth";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),

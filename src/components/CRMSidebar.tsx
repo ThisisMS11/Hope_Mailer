@@ -28,7 +28,7 @@ import {
 } from "@/imports/Shadcn_imports";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/features/authentication/hooks/useAuth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

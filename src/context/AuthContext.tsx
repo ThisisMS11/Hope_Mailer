@@ -1,18 +1,27 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { createContext, useState, useEffect } from "react";
+import {
+  useMutation,
+  useQuery,
+  UseMutationResult,
+} from "@tanstack/react-query";
 import { ResponseBody } from "@/types";
 import { LoginRequest, UserInfo } from "@/features/authentication/types";
-import axios from "@/lib/axios";
 import { queryClient } from "@/lib/queryClient";
+import { getUserInfoApiFunc, loginApiFunc, logoutApiFunc } from "@/api/auth";
 
 type AuthContextType = {
   user: UserInfo | null;
-  requestLogin: any;
+  requestLogin: UseMutationResult<
+    ResponseBody<UserInfo>,
+    Error,
+    LoginRequest,
+    unknown
+  >;
   loading: boolean;
   isAuthenticated: boolean;
   refetchUser: any;
-  logout: () => Promise<void>;
+  requestLogout: UseMutationResult<ResponseBody<null>, Error, void, unknown>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -31,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     error,
   } = useQuery<ResponseBody<UserInfo>, Error>({
     queryKey: ["user"],
-    queryFn: () => axios.get("/user").then((res) => res.data),
+    queryFn: () => getUserInfoApiFunc(),
     staleTime: 0,
     retry: false,
     refetchOnWindowFocus: false, // Prevent unnecessary refetches
@@ -42,7 +51,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (userResponse?.data) {
       setUser(userResponse.data);
     } else if (isError) {
-      // If error (like 401), the user is not authenticated
       console.error(error);
       setUser(null);
     }
@@ -50,13 +58,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const requestLogin = useMutation<ResponseBody<UserInfo>, Error, LoginRequest>(
     {
-      mutationFn: (body) => {
-        return axios.post("/public/login", body);
-      },
+      mutationFn: async (body) => loginApiFunc(body),
       onSuccess: (response) => {
         console.log(response);
         setUser(response?.data ?? null);
-        // Invalidate a user query to refetch user data
         queryClient.invalidateQueries({ queryKey: ["user"] });
       },
       onError: (error) => {
@@ -66,19 +71,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   );
 
-  const logout = async () => {
-    try {
-      // Call logout endpoint to clear httpOnly cookie
-      await axios.post("/public/logout");
-    } catch (error) {
-      console.error("Logout request failed:", error);
-    } finally {
-      // Clear user state regardless of API call result
+  const requestLogout = useMutation<ResponseBody<null>, Error>({
+    mutationFn: logoutApiFunc,
+    onSuccess: () => {
       setUser(null);
-      // Clear all cached data
       queryClient.clear();
-    }
-  };
+    },
+    onError: (error) => {
+      console.error("Logout request failed:", error);
+      setUser(null);
+      queryClient.clear();
+    },
+  });
 
   return (
     <AuthContext.Provider
@@ -88,18 +92,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         loading: isLoading,
         isAuthenticated: !!user,
         refetchUser,
-        logout,
+        requestLogout,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

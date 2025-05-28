@@ -52,7 +52,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "winston": "^3.17.0",
-    "zod": "^3.25.20"
+    "zod": "^3.25.32"
   },
   "devDependencies": {
     "@types/node": "^20",
