@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
+import useCustomToast from "@/hooks/useCustomToast";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -51,6 +52,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
   const [templates, setTemplates] = useState<EmailTemplate[]>(mockTemplates);
   const { emailFormData, requestCreateEmailRecords } = useCreateEmailRecords();
+  const { showErrorToast } = useCustomToast();
 
   // Placeholder suggestion state
   const [showPlaceholders, setShowPlaceholders] = useState(false);
@@ -190,7 +192,6 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
   useEffect(() => {
     emailFormData.setValue("contactIds", checkedContacts);
-    // Set default scheduled time to now (in milliseconds)
     if (!emailFormData.getValues("scheduledTime")) {
       emailFormData.setValue("scheduledTime", Date.now());
     }
@@ -216,9 +217,47 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
   useEffect(() => {
     console.log("Form errors:", emailFormData.formState.errors);
+    const errors = emailFormData.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      Object.entries(errors).forEach(([field, error]) => {
+        if (
+          error &&
+          typeof error.message === "string" &&
+          !["subject", "body"].includes(field)
+        ) {
+          showErrorToast(`${field}: ${error.message}`);
+        }
+      });
+      return;
+    }
   }, [emailFormData.formState.errors]);
 
   const handleSendEmail = async (values: z.infer<typeof formSchema>) => {
+    if (
+      requiredLinks.internshipLink ||
+      requiredLinks.resumeLink ||
+      requiredLinks.coverLetterLink
+    ) {
+      if (
+        !values.additionalData.internshipLink &&
+        requiredLinks.internshipLink
+      ) {
+        showErrorToast("Internship link is required.");
+        return;
+      }
+      if (!values.additionalData.resumeLink && requiredLinks.resumeLink) {
+        showErrorToast("Resume link is required.");
+        return;
+      }
+      if (
+        !values.additionalData.coverLetterLink &&
+        requiredLinks.coverLetterLink
+      ) {
+        showErrorToast("Cover letter link is required.");
+        return;
+      }
+    }
+
     console.log("Form submitted with values:", values);
   };
 

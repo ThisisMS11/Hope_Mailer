@@ -43,7 +43,7 @@ export default function RootLayout({
           "bg-gray-50",
         )}
       >
-        <Toaster />
+        <Toaster richColors />
         <div className="flex min-h-screen w-full">
           <Providers>
             <main className="flex-1">
