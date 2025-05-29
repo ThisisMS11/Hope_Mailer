@@ -47,4 +47,5 @@ declare module "lucide-react" {
   export const X: any;
   export const FileImage: any;
   export const Link: any;
+  export const CircleCheck: any;
 }

@@ -28,3 +28,5 @@ export interface FilterI {
   [FilterTypeEnum.COMPANY_NAME]: string[];
   [FilterTypeEnum.IS_VALID]: boolean;
 }
+
+export type ContactList = ContactI[];

@@ -29,7 +29,7 @@ export const formSchema = z.object({
       .optional()
       .transform((val) => (val === "" ? undefined : val)),
   }),
-  attachmentIds: z.array(z.string()).optional(),
+  attachmentIds: z.array(z.number()),
   contactIds: z.array(z.number()).min(1, "At least one Contact is required"),
 });
 
@@ -56,6 +56,7 @@ export const useCreateEmailRecords = () => {
     mutationFn: async (body) => createEmailApiFunc(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EMAILS] });
+      emailFormData.reset();
     },
     onError: (error: Error) => {
       console.error(error);

@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 import ContactCard from "@/features/contacts/components/ContactCard";
 import FilterBox from "@/features/contacts/components/FilterBox";
 import { mockContacts } from "@/mock/contacts.mock";
-import { ContactI, FilterI } from "@/features/contacts/types";
+import { ContactI, ContactList, FilterI } from "@/features/contacts/types";
 import { FilterTypeEnum } from "@/enums/enums";
 import EmailComposer from "@/features/emails/components/EmailComposer";
+import useGetContacts from "@/features/contacts/hooks/useGetContacts";
 
 const ContactsPage = () => {
-  const [filteredContacts, setFilteredContacts] =
-    useState<ContactI[]>(mockContacts);
+  const { data: contactsData, isLoading, isError, error } = useGetContacts();
+
   const [filters, setFilters] = useState<FilterI>({
     [FilterTypeEnum.POSITION_TYPE]: [],
     [FilterTypeEnum.COMPANY_NAME]: [],
@@ -18,6 +19,7 @@ const ContactsPage = () => {
   const [checkedContacts, setCheckedContacts] = useState<number[]>([]);
   const [isEmailPanelOpen, setIsEmailPanelOpen] = useState(false);
   const [mainContentWidth, setMainContentWidth] = useState("100%");
+  const [filteredContacts, setFilteredContacts] = useState<ContactList>([]);
 
   useEffect(() => {
     // Adjust the main content width when an email panel opens/closes
@@ -52,10 +54,38 @@ const ContactsPage = () => {
     setIsEmailPanelOpen(true);
   };
 
+  // Initialize filtered contacts when data is loaded
+  useEffect(() => {
+    if (contactsData?.data) {
+      setFilteredContacts(contactsData.data);
+    }
+  }, [contactsData]);
+
   // Get recipient information for display
   const selectedContactsInfo = filteredContacts.filter((contact) =>
     checkedContacts.includes(contact.id),
   );
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-red-500 text-lg font-medium mb-2">
+            Oops! Something went wrong
+          </p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {error?.message || "Failed to load contacts"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">Loading...</div>
+    );
+  }
 
   return (
     <div className="flex h-full">

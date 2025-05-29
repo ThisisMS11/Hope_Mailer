@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { EmailTemplate, PlaceHolders } from "@/features/emails/templates/types";
 import { mockTemplates } from "@/mock/templates.mock";
 import { Button } from "@/components/ui/button";
-import { Send, X } from "lucide-react";
+import { Send, X, CircleCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -30,6 +30,7 @@ import {
 import { z } from "zod";
 import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
 import useCustomToast from "@/hooks/useCustomToast";
+import { createEmailApiFunc } from "@/api/email";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -259,7 +260,24 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     }
 
     console.log("Form submitted with values:", values);
+    requestCreateEmailRecords.mutate(values);
   };
+
+  useEffect(() => {
+    if (requestCreateEmailRecords.isSuccess) {
+      emailFormData.reset();
+      setSelectedTemplateId("");
+      setRequiredLinks({
+        internshipLink: false,
+        resumeLink: false,
+        coverLetterLink: false,
+      });
+
+      setTimeout(() => {
+        setIsEmailPanelOpen(false);
+      }, 2000);
+    }
+  }, [requestCreateEmailRecords.isSuccess]);
 
   return (
     <div>
@@ -497,9 +515,32 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
               </div>
             )}
           </div>
-          <Button type="submit" className="mt-auto">
-            <Send className="mr-2 h-4 w-4" />
-            Send Email
+          <Button
+            type="submit"
+            className="mt-auto"
+            disabled={requestCreateEmailRecords.isPending}
+          >
+            {requestCreateEmailRecords.isPending ? (
+              <>
+                <span className="animate-spin mr-2">⏳</span>
+                Sending...
+              </>
+            ) : requestCreateEmailRecords.isError ? (
+              <>
+                <X className="mr-2 h-4 w-4" />
+                Failed to Send
+              </>
+            ) : requestCreateEmailRecords.isSuccess ? (
+              <>
+                <CircleCheck className="mr-2 h-4 w-4 text-green-300" />
+                Sent Successfully
+              </>
+            ) : (
+              <>
+                <Send className="mr-2 h-4 w-4" />
+                Send Email
+              </>
+            )}
           </Button>
         </form>
       </Form>

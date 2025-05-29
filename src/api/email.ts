@@ -5,14 +5,14 @@ import { ResponseBody } from "@/types";
 export const createEmailApiFunc = async (
   emailRecordRequestBody: EmailRecordRequestBody,
 ): Promise<ResponseBody<EmailList>> => {
-  const response = await axios.post("/emails-records", emailRecordRequestBody);
+  const response = await axios.post("/email-records", emailRecordRequestBody);
   return response.data;
 };
 
 export const getEmailRecordsApiFunc = async (): Promise<
   ResponseBody<EmailList>
 > => {
-  const response = await axios.get("/emails-records");
+  const response = await axios.get("/email-records");
   return response.data;
 };
 
