@@ -8,17 +8,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   subject: z.string().min(5, "Subject is required"),
   body: z.string().min(5, "Body is required"),
   scheduledTime: z.number().min(0, "Scheduled time must be a positive number"),
   additionalData: z.object({
-    internshipLink: z.string().url("Invalid URL").optional(),
-    coverLetterLink: z.string().url("Invalid URL").optional(),
-    resumeLink: z.string().url("Invalid URL").optional(),
+    internshipLink: z
+      .string()
+      .url("Invalid URL")
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
+    coverLetterLink: z
+      .string()
+      .url("Invalid URL")
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
+    resumeLink: z
+      .string()
+      .url("Invalid URL")
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
   }),
   attachmentIds: z.array(z.string()).optional(),
-  contactIds: z.array(z.string()).min(1, "At least one Contact is required"),
+  contactIds: z.array(z.number()).min(1, "At least one Contact is required"),
 });
 
 export const useCreateEmailRecords = () => {
@@ -26,7 +38,7 @@ export const useCreateEmailRecords = () => {
     subject: "",
     body: "",
     scheduledTime: 0,
-    additionalData: { internshipLink: "", coverLetterLink: "", resumeLink: "" },
+    additionalData: {},
     attachmentIds: [],
     contactIds: [],
   };

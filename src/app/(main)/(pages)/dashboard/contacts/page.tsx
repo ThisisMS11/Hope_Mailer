@@ -5,7 +5,7 @@ import FilterBox from "@/features/contacts/components/FilterBox";
 import { mockContacts } from "@/mock/contacts.mock";
 import { ContactI, FilterI } from "@/features/contacts/types";
 import { FilterTypeEnum } from "@/enums/enums";
-import EmailComposer from "@/features/contacts/components/EmailComposer";
+import EmailComposer from "@/features/emails/components/EmailComposer";
 
 const ContactsPage = () => {
   const [filteredContacts, setFilteredContacts] =

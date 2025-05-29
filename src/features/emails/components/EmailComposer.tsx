@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { EmailTemplate, PlaceHolders } from "@/features/emails/templates/types";
 import { mockTemplates } from "@/mock/templates.mock";
@@ -14,7 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ContactI } from "@/features/contacts/types";
-import { useCreateEmailRecords } from "@/features/emails/hooks/useCreateEmailRecords";
+import {
+  formSchema,
+  useCreateEmailRecords,
+} from "@/features/emails/hooks/useCreateEmailRecords";
 import {
   Form,
   FormControl,
@@ -23,6 +27,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { z } from "zod";
+import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -83,7 +89,6 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
   // Handle subject input with placeholder detection
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    emailFormData.setValue("subject", value);
 
     // Check if we just typed {{
     const lastTwoChars = value.slice(-2);
@@ -171,7 +176,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     emailFormData.setValue(`additionalData.${type}`, value);
   };
 
-  // Close placeholder menu when clicking outside
+  // Close the placeholder menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setShowPlaceholders(false);
@@ -183,6 +188,14 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    emailFormData.setValue("contactIds", checkedContacts);
+    // Set default scheduled time to now (in milliseconds)
+    if (!emailFormData.getValues("scheduledTime")) {
+      emailFormData.setValue("scheduledTime", Date.now());
+    }
+  }, [checkedContacts, emailFormData]);
+
   // Handle template selection
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplateId(templateId);
@@ -192,24 +205,21 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
         (template) => template.id === templateId,
       );
       if (selectedTemplate) {
-        // Update form data with selected template
+        // Update form data with the selected template
         emailFormData.setValue("subject", selectedTemplate.subject);
         emailFormData.setValue("body", selectedTemplate.body);
-        // Update required links when template changes
+        // Update required links when the template changes
         updateRequiredLinks(selectedTemplate.subject, selectedTemplate.body);
       }
     }
   };
 
-  const handleSendEmail = () => {
-    if (checkedContacts.length === 0) {
-      alert("Please select at least one contact to send the email.");
-      return;
-    }
-    emailFormData.setValue('contactIds',checkedContacts);
-    console.log("Email data:", emailFormData);
-    // Here you would implement the actual email sending logic
-    alert("Email would be sent to " + checkedContacts.length + " contacts");
+  useEffect(() => {
+    console.log("Form errors:", emailFormData.formState.errors);
+  }, [emailFormData.formState.errors]);
+
+  const handleSendEmail = async (values: z.infer<typeof formSchema>) => {
+    console.log("Form submitted with values:", values);
   };
 
   return (
@@ -259,7 +269,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
       <Form {...emailFormData}>
         <form
-          onSubmit={handleSendEmail}
+          onSubmit={emailFormData.handleSubmit(handleSendEmail)}
           className="space-y-4 flex-1 flex flex-col"
         >
           <FormField
@@ -274,10 +284,13 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
                       {...field}
                       ref={subjectRef}
                       placeholder="Enter email subject"
-                      onChange={handleSubjectChange}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleSubjectChange(e);
+                      }}
                     />
                   </FormControl>
-                  {/* Placeholder dropdown for subject */}
+                  {/* Placeholder dropdown for a subject */}
                   {showPlaceholders && placeholderField === "subject" && (
                     <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
                       <div className="p-2 text-xs font-semibold border-b">
@@ -305,6 +318,13 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
             )}
           />
 
+          {/* Scheduled time */}
+          <DateTimePicker
+            name="scheduledTime"
+            control={emailFormData.control}
+            label="Schedule Email For"
+          />
+
           <FormField
             name={"body"}
             control={emailFormData.control}
@@ -317,7 +337,10 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
                       {...field}
                       ref={bodyRef}
                       placeholder="Write your message here..."
-                      onChange={handleBodyChange}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleBodyChange(e);
+                      }}
                       className="h-[200px]"
                     />
                   </FormControl>
@@ -434,12 +457,11 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
                 )}
               </div>
             )}
-
-            <Button type="submit" className="mt-auto">
-              <Send className="mr-2 h-4 w-4" />
-              Send Email
-            </Button>
           </div>
+          <Button type="submit" className="mt-auto">
+            <Send className="mr-2 h-4 w-4" />
+            Send Email
+          </Button>
         </form>
       </Form>
     </div>
