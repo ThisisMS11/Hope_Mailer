@@ -1,10 +1,13 @@
-export interface EmailTemplate {
-  id: string;
+export interface EmailTemplateRequestBody {
   name: string;
   subject: string;
   body: string;
-  createdAt: Date;
-  updatedAt: Date;
+}
+
+export interface EmailTemplateI extends EmailTemplateRequestBody {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum PlaceHolders {
@@ -22,3 +25,5 @@ export enum PlaceHolders {
   RESUME_LINK = "{{resumeLink}}",
   COVER_LETTER_LINK = "{{coverLetterLink}}",
 }
+
+export type EmailTemplateList = EmailTemplateI[];

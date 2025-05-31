@@ -1,6 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { EmailTemplate, PlaceHolders } from "@/features/emails/templates/types";
+import {
+  EmailTemplateI,
+  PlaceHolders,
+} from "@/features/emails/templates/types";
 import { mockTemplates } from "@/mock/templates.mock";
 import { Button } from "@/components/ui/button";
 import { Send, X, CircleCheck } from "lucide-react";
@@ -30,7 +33,6 @@ import {
 import { z } from "zod";
 import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
 import useCustomToast from "@/hooks/useCustomToast";
-import { createEmailApiFunc } from "@/api/email";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -51,7 +53,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     coverLetterLink: false,
   });
 
-  const [templates, setTemplates] = useState<EmailTemplate[]>(mockTemplates);
+  const [templates, setTemplates] = useState<EmailTemplateI[]>([]);
   const { emailFormData, requestCreateEmailRecords } = useCreateEmailRecords();
   const { showErrorToast } = useCustomToast();
 
@@ -263,6 +265,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     requestCreateEmailRecords.mutate(values);
   };
 
+  // TODO : Put this login in custom hook
   useEffect(() => {
     if (requestCreateEmailRecords.isSuccess) {
       emailFormData.reset();

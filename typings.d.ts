@@ -48,4 +48,8 @@ declare module "lucide-react" {
   export const FileImage: any;
   export const Link: any;
   export const CircleCheck: any;
+  export const Eye: any;
+  export const FileIcon: any;
+  export const Inbox: any;
+  export const Search: any;
 }

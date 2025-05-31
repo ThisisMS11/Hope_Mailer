@@ -49,6 +49,8 @@ export {
   DialogContent,
   DialogTrigger,
   DialogClose,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 export {
@@ -61,3 +63,5 @@ export {
 export { Skeleton } from "@/components/ui/skeleton";
 
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export { Badge } from "@/components/ui/badge";

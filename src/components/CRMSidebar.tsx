@@ -109,7 +109,7 @@ export default function CRMSidebar() {
               <SidebarMenuItem className="border-b-1">
                 <SidebarMenuButton asChild>
                   <Link
-                    href="/dashboard/emails"
+                    href="/dashboard/emails/records"
                     className={
                       pathname === "/dashboard/emails"
                         ? "bg-muted text-primary font-medium rounded-md"
@@ -117,7 +117,7 @@ export default function CRMSidebar() {
                     }
                   >
                     <Mail className="h-4 w-4 mr-2" />
-                    <span>Past Emails</span>
+                    <span>Email Records</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

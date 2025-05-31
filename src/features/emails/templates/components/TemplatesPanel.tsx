@@ -9,6 +9,8 @@ import {
   CardTitle,
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   Input,
   Table,
@@ -19,106 +21,167 @@ import {
   TableRow,
   Textarea,
 } from "@/imports/Shadcn_imports";
-import { Pencil, Plus, Save, Trash2, X } from "lucide-react";
-import { EmailTemplate, PlaceHolders } from "@/features/emails/templates/types";
-import { mockTemplates } from "@/mock/templates.mock";
+import { Loader2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
+import {
+  EmailTemplateI,
+  PlaceHolders,
+} from "@/features/emails/templates/types";
+import useEmailTemplates from "@/features/emails/templates/hooks/useEmailTemplates";
+import useEmailTemplatesMutations, {
+  emailTemplateFormSchema,
+} from "@/features/emails/templates/hooks/useEmailTemplatesMutations";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { formatDate } from "@/utils/UtilFunctions";
 
 const TemplatesPanel = () => {
-  const [templateName, setTemplateName] = useState("");
-  const [subject, setSubject] = useState("");
-  const [body, setBody] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(
+  // Add form state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<EmailTemplateI | null>(
     null,
   );
 
-  // Placeholder suggestion state
+  // Placeholder suggestion state for add form
   const [showPlaceholders, setShowPlaceholders] = useState(false);
   const [placeholderField, setPlaceholderField] = useState<
     "subject" | "body" | null
   >(null);
   const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
-  // Refs for input fields
+  // Placeholder suggestion state for edit form
+  const [showEditPlaceholders, setShowEditPlaceholders] = useState(false);
+  const [editPlaceholderField, setEditPlaceholderField] = useState<
+    "subject" | "body" | null
+  >(null);
+  const [editCursorPosition, setEditCursorPosition] = useState<number | null>(
+    null,
+  );
+
+  // Refs for input fields (add form)
   const subjectRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  // Refs for input fields (edit form)
+  const editSubjectRef = useRef<HTMLInputElement>(null);
+  const editBodyRef = useRef<HTMLTextAreaElement>(null);
 
   // Available placeholders from enum
   const placeholders = Object.values(PlaceHolders);
 
-  // Mock templates data (replace with actual API calls later)
-  const [templates, setTemplates] = useState<EmailTemplate[]>(mockTemplates);
+  const {
+    data: emailTemplates,
+    isError,
+    isLoading,
+    error,
+  } = useEmailTemplates();
 
-  // Handle subject input
-  const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const {
+    emailTemplateFormData,
+    requestCreateEmailTemplate,
+    requestUpdateEmailTemplate,
+    requestDeleteEmailTemplate,
+  } = useEmailTemplatesMutations();
+
+  // Create a separate form for editing
+  const { emailTemplateFormData: editEmailTemplateFormData } =
+    useEmailTemplatesMutations();
+
+  const [templates, setTemplates] = useState<EmailTemplateI[]>([]);
+
+  // Handle input change for add form
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: "subject" | "body",
+  ) => {
     const value = e.target.value;
-    setSubject(value);
-
-    // Check if we just typed {{
     const lastTwoChars = value.slice(-2);
     if (lastTwoChars === "{{") {
       setShowPlaceholders(true);
-      setPlaceholderField("subject");
+      setPlaceholderField(field);
       setCursorPosition(e.target.selectionStart);
     } else {
       setShowPlaceholders(false);
     }
   };
 
-  // Handle body input
-  const handleBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  // Handle input change for edit form
+  const handleEditInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: "subject" | "body",
+  ) => {
     const value = e.target.value;
-    setBody(value);
-
-    // Check if we just typed {{
     const lastTwoChars = value.slice(-2);
     if (lastTwoChars === "{{") {
-      setShowPlaceholders(true);
-      setPlaceholderField("body");
-      setCursorPosition(e.target.selectionStart);
+      setShowEditPlaceholders(true);
+      setEditPlaceholderField(field);
+      setEditCursorPosition(e.target.selectionStart);
     } else {
-      setShowPlaceholders(false);
+      setShowEditPlaceholders(false);
     }
   };
 
-  // Handle selecting a placeholder
+  // Handle selecting a placeholder for add form
   const handleSelectPlaceholder = (placeholder: string) => {
     if (!placeholderField || cursorPosition === null) return;
 
-    // Remove the {{ that triggered the menu
-    const field = placeholderField === "subject" ? subject : body;
+    const currentValue = emailTemplateFormData.getValues(placeholderField);
     const newValue =
-      field.slice(0, cursorPosition - 2) +
+      currentValue.slice(0, cursorPosition - 2) +
       placeholder +
-      field.slice(cursorPosition);
+      currentValue.slice(cursorPosition);
 
-    if (placeholderField === "subject") {
-      setSubject(newValue);
-      setTimeout(() => {
-        if (subjectRef.current) {
-          subjectRef.current.focus();
-          const newCursorPos = cursorPosition - 2 + placeholder.length;
-          subjectRef.current.setSelectionRange(newCursorPos, newCursorPos);
-        }
-      }, 0);
-    } else {
-      setBody(newValue);
-      setTimeout(() => {
-        if (bodyRef.current) {
-          bodyRef.current.focus();
-          const newCursorPos = cursorPosition - 2 + placeholder.length;
-          bodyRef.current.setSelectionRange(newCursorPos, newCursorPos);
-        }
-      }, 0);
-    }
+    emailTemplateFormData.setValue(placeholderField, newValue);
+
+    setTimeout(() => {
+      const ref = placeholderField === "subject" ? subjectRef : bodyRef;
+      if (ref.current) {
+        ref.current.focus();
+        const newCursorPos = cursorPosition - 2 + placeholder.length;
+        ref.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
 
     setShowPlaceholders(false);
+  };
+
+  // Handle selecting a placeholder for edit form
+  const handleSelectEditPlaceholder = (placeholder: string) => {
+    if (!editPlaceholderField || editCursorPosition === null) return;
+
+    const currentValue =
+      editEmailTemplateFormData.getValues(editPlaceholderField);
+    const newValue =
+      currentValue.slice(0, editCursorPosition - 2) +
+      placeholder +
+      currentValue.slice(editCursorPosition);
+
+    editEmailTemplateFormData.setValue(editPlaceholderField, newValue);
+
+    setTimeout(() => {
+      const ref =
+        editPlaceholderField === "subject" ? editSubjectRef : editBodyRef;
+      if (ref.current) {
+        ref.current.focus();
+        const newCursorPos = editCursorPosition - 2 + placeholder.length;
+        ref.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+
+    setShowEditPlaceholders(false);
   };
 
   // Close the placeholder menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setShowPlaceholders(false);
+      setShowEditPlaceholders(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -126,81 +189,84 @@ const TemplatesPanel = () => {
     };
   }, []);
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!templateName || !subject || !body) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    if (isEditing && currentTemplateId) {
-      // Update existing template
-      const updatedTemplates = templates.map((template) =>
-        template.id === currentTemplateId
-          ? {
-              ...template,
-              name: templateName,
-              subject: subject,
-              body: body,
-              updatedAt: new Date(),
-            }
-          : template,
-      );
-      setTemplates(updatedTemplates);
-    } else {
-      // Add new template
-      const newTemplate: EmailTemplate = {
-        id: Date.now().toString(),
-        name: templateName,
-        subject: subject,
-        body: body,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setTemplates([...templates, newTemplate]);
-    }
-
-    // Reset form
-    resetForm();
+  const resetAddForm = () => {
+    emailTemplateFormData.reset();
   };
 
-  // Function to reset form fields
-  const resetForm = () => {
-    setTemplateName("");
-    setSubject("");
-    setBody("");
-    setIsEditing(false);
-    setCurrentTemplateId(null);
+  const openEditModal = (template: EmailTemplateI) => {
+    setEditingTemplate(template);
+    editEmailTemplateFormData.reset();
+    editEmailTemplateFormData.setValue("name", template.name);
+    editEmailTemplateFormData.setValue("subject", template.subject);
+    editEmailTemplateFormData.setValue("body", template.body);
+    setIsEditModalOpen(true);
   };
 
-  // Function to edit a template
-  const editTemplate = (template: EmailTemplate) => {
-    setTemplateName(template.name);
-    setSubject(template.subject);
-    setBody(template.body);
-    setIsEditing(true);
-    setCurrentTemplateId(template.id);
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingTemplate(null);
+    editEmailTemplateFormData.reset();
   };
 
   // Function to delete a template
-  const deleteTemplate = (id: string) => {
+  const deleteTemplate = (id: number) => {
     if (confirm("Are you sure you want to delete this template?")) {
-      setTemplates(templates.filter((template) => template.id !== id));
+      setTemplates(templates.filter((template) => template.id != id));
+      requestDeleteEmailTemplate.mutate(id);
     }
   };
 
-  // Format date for display
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
+  // Handle adding new template
+  const handleAddEmailTemplate = (
+    values: z.infer<typeof emailTemplateFormSchema>,
+  ) => {
+    requestCreateEmailTemplate.mutate(values);
+    console.log("Adding template:", values);
   };
+
+  // Handle updating template
+  const handleUpdateEmailTemplate = (
+    values: z.infer<typeof emailTemplateFormSchema>,
+  ) => {
+    if (editingTemplate) {
+      const updateData = {
+        ...values,
+        id: editingTemplate.id,
+        createdAt: editingTemplate.createdAt,
+        updatedAt: editingTemplate.updatedAt,
+      };
+      requestUpdateEmailTemplate.mutate(updateData);
+      console.log("Updating template:", updateData);
+      closeEditModal();
+    }
+  };
+
+  useEffect(() => {
+    if (emailTemplates && emailTemplates.data) {
+      setTemplates(emailTemplates.data);
+    }
+  }, [emailTemplates, requestCreateEmailTemplate]);
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-red-500 text-lg font-medium mb-2">
+            Oops! Something went wrong
+          </p>
+          <p className="text-gray-600 dark:text-gray-400">
+            {error?.message || "Failed to load templates"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">Loading...</div>
+    );
+  }
 
   return (
     <div>
@@ -210,133 +276,163 @@ const TemplatesPanel = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Template Form Card */}
+        {/* Add Template Form Card */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>
-              {isEditing ? "Edit Template" : "Add New Template"}
-            </CardTitle>
+            <CardTitle>Add New Template</CardTitle>
             <CardDescription>
-              {isEditing
-                ? "Update your email template details"
-                : "Create a new email template to use later"}
+              Create a new email template to use later
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Template Name
-                </label>
-                <Input
-                  id="name"
-                  placeholder="e.g. Welcome Email"
-                  value={templateName}
-                  onChange={(e) => setTemplateName(e.target.value)}
-                  required
-                />
-              </div>
 
-              <div className="space-y-2 relative">
-                <label htmlFor="subject" className="text-sm font-medium">
-                  Email Subject
-                </label>
-                <Input
-                  id="subject"
-                  ref={subjectRef}
-                  placeholder="e.g. Welcome to our platform!"
-                  value={subject}
-                  onChange={handleSubjectChange}
-                  required
+          <Form {...emailTemplateFormData}>
+            <form
+              onSubmit={emailTemplateFormData.handleSubmit(
+                handleAddEmailTemplate,
+              )}
+            >
+              <CardContent className="space-y-4">
+                <FormField
+                  name={"name"}
+                  control={emailTemplateFormData.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Template Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g. Welcome Email"
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
 
-                {/* Placeholder dropdown for a subject */}
-                {showPlaceholders && placeholderField === "subject" && (
-                  <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
-                    <div className="p-2 text-xs font-semibold border-b">
-                      Select a placeholder:
-                    </div>
-                    <div className="p-1">
-                      {placeholders.map((placeholder, index) => (
-                        <div
-                          key={index}
-                          className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
-                          onMouseDown={(e) => {
-                            e.preventDefault(); // Prevent focus loss
-                            handleSelectPlaceholder(placeholder);
-                          }}
-                        >
-                          {placeholder}
+                <FormField
+                  name={"subject"}
+                  control={emailTemplateFormData.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            ref={subjectRef}
+                            placeholder="e.g. Welcome to our platform!"
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleInputChange(e, "subject");
+                            }}
+                            required
+                          />
+                          {showPlaceholders &&
+                            placeholderField === "subject" && (
+                              <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
+                                <div className="p-2 text-xs font-semibold border-b">
+                                  Select a placeholder:
+                                </div>
+                                <div className="p-1">
+                                  {placeholders.map((placeholder, index) => (
+                                    <div
+                                      key={index}
+                                      className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        handleSelectPlaceholder(placeholder);
+                                      }}
+                                    >
+                                      {placeholder}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2 relative">
-                <label htmlFor="body" className="text-sm font-medium">
-                  Email Body
-                </label>
-
-                <div className="text-xs text-muted-foreground mb-1">
-                  type something like &#123;&#123;firstName&#125;&#125; to see
-                  available placeholders
-                </div>
-                <Textarea
-                  id="body"
-                  ref={bodyRef}
-                  placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
-                  value={body}
-                  onChange={handleBodyChange}
-                  className="min-h-[200px]"
-                  required
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
 
-                {/* Placeholder dropdown for body */}
-                {showPlaceholders && placeholderField === "body" && (
-                  <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
-                    <div className="p-2 text-xs font-semibold border-b">
-                      Select a placeholder:
-                    </div>
-                    <div className="p-1">
-                      {placeholders.map((placeholder, index) => (
-                        <div
-                          key={index}
-                          className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
-                          onMouseDown={(e) => {
-                            e.preventDefault(); // Prevent focus loss
-                            handleSelectPlaceholder(placeholder);
-                          }}
-                        >
-                          {placeholder}
+                <FormField
+                  name={"body"}
+                  control={emailTemplateFormData.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Body</FormLabel>
+                      <div className="text-xs text-muted-foreground mb-1">
+                        type something like &#123;&#123;firstName&#125;&#125; to
+                        see available placeholders
+                      </div>
+                      <FormControl>
+                        <div className="relative">
+                          <Textarea
+                            {...field}
+                            ref={bodyRef}
+                            placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleInputChange(e, "body");
+                            }}
+                            className="min-h-[200px]"
+                            required
+                          />
+                          {showPlaceholders && placeholderField === "body" && (
+                            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
+                              <div className="p-2 text-xs font-semibold border-b">
+                                Select a placeholder:
+                              </div>
+                              <div className="p-1">
+                                {placeholders.map((placeholder, index) => (
+                                  <div
+                                    key={index}
+                                    className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectPlaceholder(placeholder);
+                                    }}
+                                  >
+                                    {placeholder}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" type="button" onClick={resetForm}>
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-              <Button type="submit">
-                {isEditing ? (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Update Template
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Template
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </form>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+
+              <CardFooter className="flex justify-between">
+                <Button type="button" variant="outline" onClick={resetAddForm}>
+                  <X className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={requestCreateEmailTemplate.isPending}
+                >
+                  {requestCreateEmailTemplate.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Adding Template
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Template
+                    </>
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
         </Card>
 
         {/* Templates Table Card */}
@@ -380,11 +476,11 @@ const TemplatesPanel = () => {
                                 </Button>
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                  <DialogTitle>{template.name}</DialogTitle>
+                                </DialogHeader>
                                 <div className="space-y-4">
                                   <div>
-                                    <h3 className="text-lg font-semibold">
-                                      {template.name}
-                                    </h3>
                                     <p className="text-sm text-muted-foreground">
                                       Created: {formatDate(template.createdAt)}
                                     </p>
@@ -406,7 +502,7 @@ const TemplatesPanel = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => editTemplate(template)}
+                              onClick={() => openEditModal(template)}
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
@@ -416,8 +512,13 @@ const TemplatesPanel = () => {
                               size="sm"
                               onClick={() => deleteTemplate(template.id)}
                               className="text-destructive hover:text-destructive/90"
+                              disabled={requestDeleteEmailTemplate.isPending}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              {requestDeleteEmailTemplate.isPending ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </TableCell>
@@ -430,6 +531,167 @@ const TemplatesPanel = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit Template Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Template</DialogTitle>
+          </DialogHeader>
+
+          <Form {...editEmailTemplateFormData}>
+            <form
+              onSubmit={editEmailTemplateFormData.handleSubmit(
+                handleUpdateEmailTemplate,
+              )}
+              className="space-y-4"
+            >
+              <FormField
+                name={"name"}
+                control={editEmailTemplateFormData.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Template Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g. Welcome Email"
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name={"subject"}
+                control={editEmailTemplateFormData.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          ref={editSubjectRef}
+                          placeholder="e.g. Welcome to our platform!"
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleEditInputChange(e, "subject");
+                          }}
+                          required
+                        />
+                        {showEditPlaceholders &&
+                          editPlaceholderField === "subject" && (
+                            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
+                              <div className="p-2 text-xs font-semibold border-b">
+                                Select a placeholder:
+                              </div>
+                              <div className="p-1">
+                                {placeholders.map((placeholder, index) => (
+                                  <div
+                                    key={index}
+                                    className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectEditPlaceholder(placeholder);
+                                    }}
+                                  >
+                                    {placeholder}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name={"body"}
+                control={editEmailTemplateFormData.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Body</FormLabel>
+                    <div className="text-xs text-muted-foreground mb-1">
+                      type something like &#123;&#123;firstName&#125;&#125; to
+                      see available placeholders
+                    </div>
+                    <FormControl>
+                      <div className="relative">
+                        <Textarea
+                          {...field}
+                          ref={editBodyRef}
+                          placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleEditInputChange(e, "body");
+                          }}
+                          className="min-h-[200px]"
+                          required
+                        />
+                        {showEditPlaceholders &&
+                          editPlaceholderField === "body" && (
+                            <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
+                              <div className="p-2 text-xs font-semibold border-b">
+                                Select a placeholder:
+                              </div>
+                              <div className="p-1">
+                                {placeholders.map((placeholder, index) => (
+                                  <div
+                                    key={index}
+                                    className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectEditPlaceholder(placeholder);
+                                    }}
+                                  >
+                                    {placeholder}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeEditModal}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={requestUpdateEmailTemplate.isPending}
+                >
+                  {requestUpdateEmailTemplate.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Updating Template
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Update Template
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

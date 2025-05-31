@@ -9,7 +9,15 @@ const useCustomToast = () => {
     });
   };
 
-  return { showErrorToast };
+  const showSuccessToast = (message: string) => {
+    toast.success(message, {
+      position: "top-right",
+      duration: 5000,
+      closeButton: true,
+    });
+  };
+
+  return { showErrorToast, showSuccessToast };
 };
 
 export default useCustomToast;

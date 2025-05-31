@@ -56,7 +56,7 @@ const ContactsPage = () => {
 
   // Initialize filtered contacts when data is loaded
   useEffect(() => {
-    if (contactsData?.data) {
+    if (contactsData && contactsData?.data) {
       setFilteredContacts(contactsData.data);
     }
   }, [contactsData]);
