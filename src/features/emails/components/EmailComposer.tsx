@@ -4,7 +4,7 @@ import {
   EmailTemplateI,
   PlaceHolders,
 } from "@/features/emails/templates/types";
-import { mockTemplates } from "@/mock/templates.mock";
+// import { mockTemplates } from "@/mock/templates.mock";
 import { Button } from "@/components/ui/button";
 import { Send, X, CircleCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -183,7 +183,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
   // Handle link input changes
   const handleLinkChange = (
-    type: "internshipLink" | "resumeLink" | "coverLetterLink",
+    type: "internshipLink" | "resumeLink" | "coverLetterLink" | "jobRole",
     value: string,
   ) => {
     emailFormData.setValue(`additionalData.${type}`, value);
@@ -455,26 +455,52 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
                 <h3 className="text-sm font-medium">Required Links</h3>
 
                 {requiredLinks.internshipLink && (
-                  <FormField
-                    name={"additionalData.internshipLink"}
-                    control={emailFormData.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Internship Link</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            id="internshipLink"
-                            placeholder="Enter internship posting link"
-                            onChange={(e) =>
-                              handleLinkChange("internshipLink", e.target.value)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <>
+                    <FormField
+                      name={"additionalData.internshipLink"}
+                      control={emailFormData.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Internship Link</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              id="internshipLink"
+                              placeholder="Enter internship posting link"
+                              onChange={(e) =>
+                                handleLinkChange(
+                                  "internshipLink",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name={"additionalData.jobRole"}
+                      control={emailFormData.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Job Role</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              id="jobRole"
+                              placeholder="Enter job role"
+                              onChange={(e) =>
+                                handleLinkChange("jobRole", e.target.value)
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
                 )}
 
                 {requiredLinks.coverLetterLink && (

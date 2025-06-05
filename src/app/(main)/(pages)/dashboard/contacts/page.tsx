@@ -88,10 +88,10 @@ const ContactsPage = () => {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex max-h-screen">
       {/* Main content - will resize when an email panel opens */}
       <section
-        className="flex flex-col h-full transition-all duration-300 ease-in-out"
+        className="flex flex-col transition-all duration-300 ease-in-out overflow-y-auto invisible-scrollbar"
         style={{ width: mainContentWidth }}
       >
         {/* heading - fixed height */}
@@ -108,7 +108,7 @@ const ContactsPage = () => {
         </div>
 
         {/* people profiles - takes remaining height with scroll */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 ">
           <div
             className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isEmailPanelOpen ? "xl:grid-cols-3" : "xl:grid-cols-4"} gap-6 pb-4`}
           >
@@ -126,7 +126,7 @@ const ContactsPage = () => {
 
       {/* Email composition panel - right side */}
       {isEmailPanelOpen && (
-        <section className="w-[35%] max-h-screen border-l border-gray-200 bg-white dark:bg-gray-800 p-4 flex flex-col">
+        <section className="w-[35%] overflow-y-auto border-l border-gray-200 bg-white dark:bg-gray-800 p-4 flex flex-col invisible-scrollbar">
           <EmailComposer
             checkedContacts={checkedContacts}
             selectedContactsInfo={selectedContactsInfo}

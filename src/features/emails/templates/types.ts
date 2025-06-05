@@ -24,6 +24,7 @@ export enum PlaceHolders {
   INTERNSHIP_LINK = "{{internshipLink}}",
   RESUME_LINK = "{{resumeLink}}",
   COVER_LETTER_LINK = "{{coverLetterLink}}",
+  JOB_ROLE= "{{jobRole}}",
 }
 
 export type EmailTemplateList = EmailTemplateI[];

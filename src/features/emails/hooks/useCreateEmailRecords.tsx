@@ -28,6 +28,21 @@ export const formSchema = z.object({
       .url("Invalid URL")
       .optional()
       .transform((val) => (val === "" ? undefined : val)),
+    jobRole: z
+      .string()
+      .refine(
+        // @ts-ignore
+        (val, ctx) => {
+          const parent = ctx?.parent as any;
+          if (parent?.internshipLink && (!val || val === "")) {
+            return false;
+          }
+          return true;
+        },
+        { message: "Job Role is required if Internship Link is provided" },
+      )
+      .optional()
+      .transform((val) => (val === "" ? undefined : val)),
   }),
   attachmentIds: z.array(z.number()),
   contactIds: z.array(z.number()).min(1, "At least one Contact is required"),
