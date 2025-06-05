@@ -33,6 +33,7 @@ import {
 import { z } from "zod";
 import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
 import useCustomToast from "@/hooks/useCustomToast";
+import useEmailTemplates from "@/features/emails/templates/hooks/useEmailTemplates";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -52,6 +53,13 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     resumeLink: false,
     coverLetterLink: false,
   });
+
+  const {
+    data: emailTemplates,
+    isError,
+    isLoading,
+    error,
+  } = useEmailTemplates();
 
   const [templates, setTemplates] = useState<EmailTemplateI[]>([]);
   const { emailFormData, requestCreateEmailRecords } = useCreateEmailRecords();
@@ -200,13 +208,19 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     }
   }, [checkedContacts, emailFormData]);
 
+  useEffect(() => {
+    if (emailTemplates && emailTemplates.data) {
+      setTemplates(emailTemplates.data);
+    }
+  }, [emailTemplates]);
+
   // Handle template selection
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplateId(templateId);
 
     if (templateId) {
       const selectedTemplate = templates.find(
-        (template) => template.id === templateId,
+        (template) => String(template.id) === templateId,
       );
       if (selectedTemplate) {
         // Update form data with the selected template
@@ -319,7 +333,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
           </SelectTrigger>
           <SelectContent>
             {templates.map((template) => (
-              <SelectItem key={template.id} value={template.id}>
+              <SelectItem key={template.id} value={String(template.id)}>
                 {template.name}
               </SelectItem>
             ))}

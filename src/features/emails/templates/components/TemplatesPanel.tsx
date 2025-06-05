@@ -268,6 +268,7 @@ const TemplatesPanel = () => {
     );
   }
 
+  // TODO : MAKE THIS COMPONENT MODULAR
   return (
     <div>
       {/* heading - fixed height */}
