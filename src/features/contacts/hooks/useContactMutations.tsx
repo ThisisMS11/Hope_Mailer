@@ -28,9 +28,7 @@ export const contactFormSchema = z.object({
   companyId: z.number().min(1, "Company is required"),
 });
 
-const useContactMutations = (
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-) => {
+const useContactMutations = () => {
   const { showErrorToast, showSuccessToast } = useCustomToast();
 
   const contactFormData = useForm<z.infer<typeof contactFormSchema>>({
@@ -59,7 +57,6 @@ const useContactMutations = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CONTACTS] });
       contactFormData.reset();
-      setIsOpen(false);
       showSuccessToast("Contact created successfully");
     },
     onError: (error: Error) => {

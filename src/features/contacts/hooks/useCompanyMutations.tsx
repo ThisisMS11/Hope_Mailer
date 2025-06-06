@@ -15,7 +15,7 @@ export const companyFormSchema = z.object({
   logo: z.string().url("Must be a valid LinkedIn URL"),
 });
 
-const useContactMutations = () => {
+const useCompanyMutations = () => {
   const { showErrorToast, showSuccessToast } = useCustomToast();
 
   const companyFormData = useForm<z.infer<typeof companyFormSchema>>({
@@ -67,4 +67,4 @@ const useContactMutations = () => {
   };
 };
 
-export default useContactMutations;
+export default useCompanyMutations;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ContactI } from "@/features/contacts/types";
 import { Image } from "@/imports/Nextjs_imports";
 import {
@@ -33,19 +33,16 @@ import {
   Trash2,
   AlertTriangle,
 } from "lucide-react";
+import useContactMutations from "@/features/contacts/hooks/useContactMutations";
 
 interface ContactCardProps {
   contact: ContactI;
-  onContactUpdate?: (updatedContact: ContactI) => void;
-  onContactDelete?: (contactId: number) => void;
   isChecked?: boolean;
   onCheckChange?: (contactId: number, isChecked: boolean) => void;
 }
 
 const ContactCard: React.FC<ContactCardProps> = ({
   contact,
-  onContactUpdate,
-  onContactDelete,
   isChecked = false,
   onCheckChange,
 }) => {
@@ -57,6 +54,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editedContact, setEditedContact] = useState<ContactI>({ ...contact });
 
+  const { requestDeleteContact, requestUpdateContact } = useContactMutations();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedContact((prev) => ({ ...prev, [name]: value }));
@@ -67,16 +66,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
   };
 
   const handleSave = () => {
-    if (onContactUpdate) {
-      onContactUpdate(editedContact);
-    }
+    requestUpdateContact.mutate(editedContact);
     setIsEditModalOpen(false);
   };
 
   const handleDelete = () => {
-    if (onContactDelete) {
-      onContactDelete(contact.id);
-    }
+    requestDeleteContact.mutate(contact.id);
     setIsDeleteModalOpen(false);
   };
 
@@ -85,6 +80,15 @@ const ContactCard: React.FC<ContactCardProps> = ({
       onCheckChange(contact.id, e.target.checked);
     }
   };
+
+  useEffect(() => {
+    if (requestUpdateContact.isSuccess) {
+      setIsEditModalOpen(false);
+    }
+    if (requestDeleteContact.isSuccess) {
+      setIsDeleteModalOpen(false);
+    }
+  }, [requestUpdateContact.isSuccess, requestDeleteContact.isSuccess]);
 
   return (
     <div className="relative w-64 rounded-2xl shadow-md p-4 pt-6 flex flex-col items-center bg-white dark:bg-[#16151c]">

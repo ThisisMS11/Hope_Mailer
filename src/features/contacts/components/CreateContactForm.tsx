@@ -35,8 +35,7 @@ interface CreateContactModalProps {
 }
 
 const CreateContactModal = ({ isOpen, setIsOpen }: CreateContactModalProps) => {
-  const { contactFormData, requestCreateContact } =
-    useContactMutations(setIsOpen);
+  const { contactFormData, requestCreateContact } = useContactMutations();
   const { showErrorToast } = useCustomToast();
 
   const handleCreateContact = (values: any) => {
@@ -60,6 +59,12 @@ const CreateContactModal = ({ isOpen, setIsOpen }: CreateContactModalProps) => {
       return;
     }
   }, [contactFormData.formState.errors]);
+
+  useEffect(() => {
+    if (requestCreateContact.isSuccess) {
+      setIsOpen(false);
+    }
+  }, [requestCreateContact.isSuccess]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
