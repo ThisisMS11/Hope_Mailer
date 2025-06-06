@@ -53,4 +53,5 @@ declare module "lucide-react" {
   export const Inbox: any;
   export const Search: any;
   export const LayoutTemplate: any;
+  export const ChevronLeft: any;
 }
