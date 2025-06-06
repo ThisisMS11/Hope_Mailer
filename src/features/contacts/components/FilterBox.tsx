@@ -16,10 +16,10 @@ import { FilterTypeEnum } from "@/enums/enums";
 
 interface FilterBoxProps {
   setFilters: React.Dispatch<React.SetStateAction<FilterI>>;
-  // filters : FilterI;
   applyFilters: () => void;
   checkedContacts: number[];
   startMailing: () => void;
+  setIsCreateModalOpen: (open: boolean) => void;
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
@@ -27,6 +27,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   applyFilters,
   startMailing,
   checkedContacts,
+  setIsCreateModalOpen,
 }) => {
   const [view, setView] = useState<"grid" | "list">("grid");
 
@@ -64,6 +65,14 @@ const FilterBox: React.FC<FilterBoxProps> = ({
       </DropdownMenu>
 
       <Button onClick={applyFilters}> Apply Filters </Button>
+
+      <Button
+        onClick={() => setIsCreateModalOpen(true)}
+        variant="default"
+        className="ml-auto"
+      >
+        Add Contact
+      </Button>
 
       {/* Button to show compose email panel */}
       {checkedContacts.length > 0 && (

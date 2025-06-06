@@ -7,6 +7,7 @@ import { ContactI, ContactList, FilterI } from "@/features/contacts/types";
 import { FilterTypeEnum } from "@/enums/enums";
 import EmailComposer from "@/features/emails/components/EmailComposer";
 import useGetContacts from "@/features/contacts/hooks/useGetContacts";
+import CreateContactModal from "@/features/contacts/components/CreateContactForm";
 
 const ContactsPage = () => {
   const { data: contactsData, isLoading, isError, error } = useGetContacts();
@@ -20,6 +21,7 @@ const ContactsPage = () => {
   const [isEmailPanelOpen, setIsEmailPanelOpen] = useState(false);
   const [mainContentWidth, setMainContentWidth] = useState("100%");
   const [filteredContacts, setFilteredContacts] = useState<ContactList>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     // Adjust the main content width when an email panel opens/closes
@@ -104,6 +106,7 @@ const ContactsPage = () => {
             setFilters={setFilters}
             startMailing={printCheckedContactIds}
             checkedContacts={checkedContacts}
+            setIsCreateModalOpen={setIsCreateModalOpen}
           />
         </div>
 
@@ -134,6 +137,11 @@ const ContactsPage = () => {
           />
         </section>
       )}
+
+      <CreateContactModal
+        isOpen={isCreateModalOpen}
+        setIsOpen={setIsCreateModalOpen}
+      />
     </div>
   );
 };
