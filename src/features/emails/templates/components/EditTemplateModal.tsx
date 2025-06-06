@@ -30,7 +30,7 @@ import {
 
 interface EditTemplateModalProps {
   isEditModalOpen: boolean;
-  setIsEditModalOpen: (open: boolean) => void;
+  setIsEditModalOpen: (__open: boolean) => void;
   editEmailTemplateFormData: UseFormReturn<
     {
       name: string;

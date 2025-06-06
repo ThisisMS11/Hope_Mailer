@@ -52,4 +52,5 @@ declare module "lucide-react" {
   export const FileIcon: any;
   export const Inbox: any;
   export const Search: any;
+  export const LayoutTemplate: any;
 }

@@ -50,9 +50,9 @@ export function EmployeeSidebar() {
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          {sideBarOptions.map((option) => {
+          {sideBarOptions.map((option, index) => {
             return (
-              <SidebarMenuItem className="flex justify-center">
+              <SidebarMenuItem className="flex justify-center" key={index}>
                 <SidebarMenuButton
                   tooltip={option.name}
                   className="pl-4"

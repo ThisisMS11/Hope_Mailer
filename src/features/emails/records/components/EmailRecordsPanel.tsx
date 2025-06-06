@@ -81,7 +81,7 @@ const EmailRecordsPanel = () => {
   };
 
   // Get file icon based on a file type
-  const getFileIcon = (fileType: string) => {
+  const getFileIcon = () => {
     return <FileIcon className="h-4 w-4 mr-1" />;
   };
 
@@ -214,7 +214,7 @@ const EmailRecordsPanel = () => {
                                           className="flex items-center justify-between p-2 border-b last:border-0"
                                         >
                                           <div className="flex items-center">
-                                            {getFileIcon(attachment.fileType)}
+                                            {getFileIcon()}
                                             <span className="text-sm">
                                               {attachment.originalFilename}
                                             </span>

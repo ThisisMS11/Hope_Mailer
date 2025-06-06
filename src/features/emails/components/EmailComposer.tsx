@@ -54,12 +54,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     coverLetterLink: false,
   });
 
-  const {
-    data: emailTemplates,
-    isError,
-    isLoading,
-    error,
-  } = useEmailTemplates();
+  const { data: emailTemplates, isLoading } = useEmailTemplates();
 
   const [templates, setTemplates] = useState<EmailTemplateI[]>([]);
   const { emailFormData, requestCreateEmailRecords } = useCreateEmailRecords();
@@ -295,6 +290,12 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
       }, 2000);
     }
   }, [requestCreateEmailRecords.isSuccess]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">Loading...</div>
+    );
+  }
 
   return (
     <div>

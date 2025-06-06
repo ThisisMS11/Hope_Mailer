@@ -30,8 +30,8 @@ import useEmailTemplatesMutations from "@/features/emails/templates/hooks/useEma
 
 interface TemplateTableProps {
   templates: EmailTemplateList;
-  openEditModal: (template: EmailTemplateList[number]) => void;
-  deleteTemplate: (id: number) => void;
+  openEditModal: (__template: EmailTemplateList[number]) => void;
+  deleteTemplate: (__id: number) => void;
 }
 
 const TemplatesTable: React.FC<TemplateTableProps> = ({

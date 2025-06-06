@@ -38,7 +38,7 @@ import useContactMutations from "@/features/contacts/hooks/useContactMutations";
 interface ContactCardProps {
   contact: ContactI;
   isChecked?: boolean;
-  onCheckChange?: (contactId: number, isChecked: boolean) => void;
+  onCheckChange?: (__contactId: number, __isChecked: boolean) => void;
 }
 
 const ContactCard: React.FC<ContactCardProps> = ({

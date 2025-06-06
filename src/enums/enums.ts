@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 export enum GenderEnum {
   MALE = "MALE",
   FEMALE = "FEMALE",
@@ -11,7 +12,6 @@ export enum PositionTypeEnum {
   HEAD = "HEAD",
   OTHERS = "OTHERS",
 }
-
 export enum FilterTypeEnum {
   POSITION_TYPE = "positionFilter",
   COMPANY_NAME = "companyFilter",

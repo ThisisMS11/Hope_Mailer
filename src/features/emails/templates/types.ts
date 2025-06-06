@@ -10,6 +10,7 @@ export interface EmailTemplateI extends EmailTemplateRequestBody {
   updatedAt: string;
 }
 
+/* eslint-disable unused-imports/no-unused-vars */
 export enum PlaceHolders {
   CONTACT_FIRST_NAME = "{{firstName}}",
   CONTACT_LAST_NAME = "{{lastName}}",

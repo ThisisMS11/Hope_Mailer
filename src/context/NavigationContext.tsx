@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface NavigationContextType {
   activeView: string;
-  setActiveView: (view: string) => void;
+  setActiveView: (__view: string) => void;
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(

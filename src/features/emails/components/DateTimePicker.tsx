@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { Control, ControllerRenderProps, useController } from "react-hook-form";
+import { Control } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -51,11 +51,11 @@ export function DateTimePicker({ name, control, label }: DateTimePickerProps) {
 
 interface DateTimePickerInputProps {
   value: number;
-  onChange: (value: number) => void;
+  onChange: (__value: number) => void;
 }
 
 function DateTimePickerInput({ value, onChange }: DateTimePickerInputProps) {
-  // Initialize with current date or the date from value if it exists
+  // Initialize with the current date or the date from value if it exists
   const [date, setDate] = useState<Date>(() => {
     return value ? new Date(value) : new Date();
   });

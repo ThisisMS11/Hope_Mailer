@@ -216,7 +216,7 @@ const FilesPanel = () => {
   };
 
   // Function to get file icon based on a file type
-  const getFileIcon = (fileType: FileType, contentType: string) => {
+  const getFileIcon = (fileType: FileType, __contentType: string) => {
     switch (fileType) {
       case FileType.IMAGE:
         return <ImageIcon className="h-8 w-8 text-blue-500" />;
@@ -506,9 +506,11 @@ const FilesPanel = () => {
                             </div>
                             {file.fileType === FileType.IMAGE && (
                               <div className="mt-4">
-                                <img
+                                <Image
                                   src={file.publicUrl}
                                   alt={file.originalFileName}
+                                  width={20}
+                                  height={20}
                                   className="w-full rounded-md"
                                 />
                               </div>

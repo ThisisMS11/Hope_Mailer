@@ -19,7 +19,7 @@ interface FilterBoxProps {
   applyFilters: () => void;
   checkedContacts: number[];
   startMailing: () => void;
-  setIsCreateModalOpen: (open: boolean) => void;
+  setIsCreateModalOpen: (__open: boolean) => void;
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
