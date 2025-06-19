@@ -9,6 +9,7 @@ import { ResponseBody } from "@/types";
 import { LoginRequest, UserInfo } from "@/features/authentication/types";
 import { queryClient } from "@/lib/queryClient";
 import { getUserInfoApiFunc, loginApiFunc, logoutApiFunc } from "@/api/auth";
+import { useRouter } from "@/imports/Nextjs_imports";
 
 type AuthContextType = {
   user: UserInfo | null;
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<UserInfo | null>(null);
+  const router = useRouter();
 
   // Query to fetch the current user - this handles hard reload
   const {
@@ -53,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } else if (isError) {
       console.error(error);
       setUser(null);
+      router.push("/auth");
     }
   }, [userResponse, isError, error]);
 

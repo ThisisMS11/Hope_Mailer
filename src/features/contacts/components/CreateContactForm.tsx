@@ -49,9 +49,9 @@ const CreateContactModal = ({ isOpen, setIsOpen }: CreateContactModalProps) => {
     if (Object.keys(errors).length > 0) {
       Object.entries(errors).forEach(([field, error]) => {
         if (
+          field === "companyId" &&
           error &&
-          typeof error.message === "string" &&
-          !["subject", "body"].includes(field)
+          typeof error.message === "string"
         ) {
           showErrorToast(`${field}: ${error.message}`);
         }
@@ -82,10 +82,10 @@ const CreateContactModal = ({ isOpen, setIsOpen }: CreateContactModalProps) => {
               name="firstName"
               control={contactFormData.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className={"mt-[16px]"}>
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder={"Enter First Name"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,7 +99,7 @@ const CreateContactModal = ({ isOpen, setIsOpen }: CreateContactModalProps) => {
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder={"Enter Last Name"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

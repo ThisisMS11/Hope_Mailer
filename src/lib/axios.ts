@@ -1,10 +1,9 @@
 import axios from "axios";
 
+console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
+
 const api = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL
-      : process.env.NEXT_PUBLIC_BACKEND_URL_REMOTE,
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
   },
