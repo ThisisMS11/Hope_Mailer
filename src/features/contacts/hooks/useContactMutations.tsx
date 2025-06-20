@@ -18,7 +18,7 @@ export const contactFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   gender: z.nativeEnum(GenderEnum),
-  mobile: z.string().min(1, "Mobile is required"),
+  mobile: z.string(),
   linkedIn: z.string().url("Must be a valid LinkedIn URL"),
   email: z.string().email("Must be a valid email"),
   position: z.string().min(1, "Position is required"),

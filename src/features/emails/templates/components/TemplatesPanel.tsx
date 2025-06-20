@@ -5,6 +5,7 @@ import useEmailTemplatesMutations from "@/features/emails/templates/hooks/useEma
 import EditTemplateModal from "@/features/emails/templates/components/EditTemplateModal";
 import TemplatesTable from "@/features/emails/templates/components/TemplatesTable";
 import CreateTemplateForm from "@/features/emails/templates/components/CreateTemplateForm";
+import CustomLoader from "@/components/CustomLoader";
 
 const TemplatesPanel = () => {
   // Add form state
@@ -74,9 +75,7 @@ const TemplatesPanel = () => {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">Loading...</div>
-    );
+    return <CustomLoader />;
   }
 
   return (

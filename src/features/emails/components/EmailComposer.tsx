@@ -34,6 +34,7 @@ import { z } from "zod";
 import { DateTimePicker } from "@/features/emails/components/DateTimePicker";
 import useCustomToast from "@/hooks/useCustomToast";
 import useEmailTemplates from "@/features/emails/templates/hooks/useEmailTemplates";
+import CustomLoader from "@/components/CustomLoader";
 
 interface EmailComposerProps {
   checkedContacts: number[];
@@ -292,9 +293,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
   }, [requestCreateEmailRecords.isSuccess]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">Loading...</div>
-    );
+    return <CustomLoader />;
   }
 
   return (

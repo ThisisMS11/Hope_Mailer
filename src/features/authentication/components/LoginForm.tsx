@@ -22,7 +22,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "@/imports/Nextjs_imports";
-import { useRouter } from "@/imports/Nextjs_imports";
 import { useAuth } from "@/features/authentication/hooks/useAuth";
 
 const formSchema = z.object({
@@ -38,7 +37,6 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const auth = useAuth();
   const { requestLogin } = auth;
-  const router = useRouter();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -49,17 +47,10 @@ export function LoginForm({
   });
 
   const onSubmit = (values: LoginFormValues) => {
-    requestLogin.mutate(
-      {
-        email: values.email,
-        password: values.password,
-      },
-      {
-        onSuccess: () => {
-          router.push("/dashboard");
-        },
-      },
-    );
+    requestLogin.mutate({
+      email: values.email,
+      password: values.password,
+    });
   };
 
   return (
@@ -130,12 +121,6 @@ export function LoginForm({
               {requestLogin.isError && (
                 <div className="mt-2 text-red-500 text-sm">
                   {requestLogin.error?.message || "Login failed"}
-                </div>
-              )}
-
-              {requestLogin.isSuccess && (
-                <div className="mt-2 text-green-400 text-sm">
-                  {"Login Successfull!!"}
                 </div>
               )}
             </form>

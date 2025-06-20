@@ -41,7 +41,7 @@ const projects = [
 ];
 
 export default function CRMSidebar() {
-  const { user } = useAuth();
+  const { user, requestLogout } = useAuth();
   const pathname = usePathname();
 
   return (
@@ -179,13 +179,10 @@ export default function CRMSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/*<DropdownMenuItem>*/}
+                {/*  <span>Account</span>*/}
+                {/*</DropdownMenuItem>*/}
+                <DropdownMenuItem onClick={requestLogout.mutate as () => void}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

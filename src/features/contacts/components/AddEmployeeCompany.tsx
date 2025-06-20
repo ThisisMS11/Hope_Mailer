@@ -18,6 +18,7 @@ import {
 } from "@/imports/Shadcn_imports";
 import useCompanyMutations from "@/features/contacts/hooks/useCompanyMutations";
 import Image from "next/image";
+import CustomLoader from "@/components/CustomLoader";
 
 type YourFormType = z.infer<typeof contactFormSchema>;
 
@@ -170,9 +171,7 @@ const AddEmployeeCompany: React.FC<AddEmployeeCompanyProps> = ({
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">Loading...</div>
-    );
+    return <CustomLoader />;
   }
 
   return (

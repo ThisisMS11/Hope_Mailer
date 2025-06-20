@@ -122,7 +122,7 @@ const EmailRecordsPanel = () => {
       </div>
 
       {/* Email Records Card */}
-      <Card>
+      <Card className={"border-none"}>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Inbox className="h-5 w-5 mr-2" />
@@ -138,7 +138,7 @@ const EmailRecordsPanel = () => {
               No email records found.
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -149,7 +149,9 @@ const EmailRecordsPanel = () => {
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody
+                  className={"max-h-32 overflow-y-auto invisible-scrollbar"}
+                >
                   {filteredRecords.map((record) => (
                     <TableRow key={record.id}>
                       <TableCell className="font-medium max-w-[250px] truncate">
@@ -184,7 +186,7 @@ const EmailRecordsPanel = () => {
                           <DialogContent className="sm:max-w-lg">
                             <div className="space-y-4">
                               <div>
-                                <h3 className="text-lg font-semibold">
+                                <h3 className="text-lg font-semibold ">
                                   {record.subject}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
@@ -198,7 +200,7 @@ const EmailRecordsPanel = () => {
 
                               <div className="space-y-1">
                                 <h4 className="font-medium">Email Body</h4>
-                                <div className="border rounded-md p-3 whitespace-pre-wrap text-sm">
+                                <div className="border rounded-md p-3 whitespace-pre-wrap text-sm max-h-80 overflow-y-auto">
                                   {record.body}
                                 </div>
                               </div>

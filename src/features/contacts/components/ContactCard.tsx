@@ -199,8 +199,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
       {/* Role */}
-      <div className="mt-4 text-center text-xs font-medium text-gray-600 tracking-wide dark:text-white">
-        {contact.position.toUpperCase()}
+      <div className="mt-4 text-center text-xs font-medium text-gray-600 tracking-wide dark:text-white truncate max-w-[150px] mx-auto">
+        {contact.position.charAt(0).toUpperCase() + contact.position.slice(1)}
       </div>
 
       {/* Edit Contact Modal */}

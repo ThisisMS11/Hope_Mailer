@@ -10,6 +10,7 @@ import { LoginRequest, UserInfo } from "@/features/authentication/types";
 import { queryClient } from "@/lib/queryClient";
 import { getUserInfoApiFunc, loginApiFunc, logoutApiFunc } from "@/api/auth";
 import { useRouter } from "@/imports/Nextjs_imports";
+import useCustomToast from "@/hooks/useCustomToast";
 
 type AuthContextType = {
   user: UserInfo | null;
@@ -32,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<UserInfo | null>(null);
   const router = useRouter();
+  const { showSuccessToast } = useCustomToast();
 
   // Query to fetch the current user - this handles hard reload
   const {
@@ -66,6 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(response);
         setUser(response?.data ?? null);
         queryClient.invalidateQueries({ queryKey: ["user"] });
+        showSuccessToast("Login successful!");
+        router.push("/dashboard");
       },
       onError: (error) => {
         console.error("Login failed:", error);
@@ -79,6 +83,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     onSuccess: () => {
       setUser(null);
       queryClient.clear();
+      router.push("/auth");
+      showSuccessToast("Logout successful!");
     },
     onError: (error) => {
       console.error("Logout request failed:", error);

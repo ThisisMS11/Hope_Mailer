@@ -8,6 +8,7 @@ import { FilterTypeEnum } from "@/enums/enums";
 import EmailComposer from "@/features/emails/components/EmailComposer";
 import useGetContacts from "@/features/contacts/hooks/useGetContacts";
 import CreateContactModal from "@/features/contacts/components/CreateContactForm";
+import CustomLoader from "@/components/CustomLoader";
 
 const ContactsPage = () => {
   const { data: contactsData, isLoading, isError, error } = useGetContacts();
@@ -37,8 +38,9 @@ const ContactsPage = () => {
   };
 
   const ApplyFilters = () => {
-    console.log(filters);
-    const filtered = mockContacts.filter(
+    if (!contactsData || !contactsData.data) return;
+
+    const filtered = contactsData.data.filter(
       (contact) =>
         (!filters?.[FilterTypeEnum.POSITION_TYPE]?.length ||
           filters[FilterTypeEnum.POSITION_TYPE].includes(
@@ -47,12 +49,10 @@ const ContactsPage = () => {
         (!filters?.[FilterTypeEnum.COMPANY_NAME]?.length ||
           filters[FilterTypeEnum.COMPANY_NAME].includes(contact.companyName)),
     );
-    console.log(filtered);
     setFilteredContacts(filtered);
   };
 
   const printCheckedContactIds = () => {
-    console.log("Selected Contact IDs:", checkedContacts);
     setIsEmailPanelOpen(true);
   };
 
@@ -83,12 +83,6 @@ const ContactsPage = () => {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">Loading...</div>
-    );
-  }
-
   return (
     <div className="flex max-h-screen">
       {/* Main content - will resize when an email panel opens */}
@@ -111,19 +105,23 @@ const ContactsPage = () => {
         </div>
 
         {/* people profiles - takes remaining height with scroll */}
-        <div className="flex-1 ">
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isEmailPanelOpen ? "xl:grid-cols-3" : "xl:grid-cols-4"} gap-6 pb-4`}
-          >
-            {filteredContacts.map((contact: ContactI) => (
-              <ContactCard
-                key={contact.id}
-                contact={contact}
-                isChecked={checkedContacts.includes(contact.id)}
-                onCheckChange={handleContactCheck}
-              />
-            ))}
-          </div>
+        <div className="flex-1">
+          {!isLoading ? (
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isEmailPanelOpen ? "xl:grid-cols-3" : "xl:grid-cols-4"} gap-6 pb-4`}
+            >
+              {filteredContacts.map((contact: ContactI) => (
+                <ContactCard
+                  key={contact.id}
+                  contact={contact}
+                  isChecked={checkedContacts.includes(contact.id)}
+                  onCheckChange={handleContactCheck}
+                />
+              ))}
+            </div>
+          ) : (
+            <CustomLoader />
+          )}
         </div>
       </section>
 

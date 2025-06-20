@@ -81,7 +81,7 @@ const TemplatesTable: React.FC<TemplateTableProps> = ({
                               View
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="sm:max-w-md">
+                          <DialogContent className="sm:max-w-md lg:max-w-lg">
                             <DialogHeader>
                               <DialogTitle>{template.name}</DialogTitle>
                             </DialogHeader>
@@ -97,7 +97,7 @@ const TemplatesTable: React.FC<TemplateTableProps> = ({
                               </div>
                               <div className="space-y-1">
                                 <h4 className="font-medium">Body</h4>
-                                <div className="border rounded-md p-3 whitespace-pre-wrap">
+                                <div className="border rounded-md p-3 whitespace-pre-wrap max-h-80 overflow-y-auto invisible-scrollbar">
                                   {template.body}
                                 </div>
                               </div>
