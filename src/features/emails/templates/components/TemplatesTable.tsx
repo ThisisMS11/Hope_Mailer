@@ -27,6 +27,7 @@ import { Loader2, Pencil, Trash2 } from "lucide-react";
 import React from "react";
 import { EmailTemplateList } from "@/features/emails/templates/types";
 import useEmailTemplatesMutations from "@/features/emails/templates/hooks/useEmailTemplatesMutations";
+import { Label } from "@/components/ui/label";
 
 interface TemplateTableProps {
   templates: EmailTemplateList;
@@ -81,7 +82,7 @@ const TemplatesTable: React.FC<TemplateTableProps> = ({
                               View
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="sm:max-w-md lg:max-w-lg">
+                          <DialogContent className="sm:max-w-md lg:max-w-2xl">
                             <DialogHeader>
                               <DialogTitle>{template.name}</DialogTitle>
                             </DialogHeader>
@@ -91,14 +92,30 @@ const TemplatesTable: React.FC<TemplateTableProps> = ({
                                   Created: {formatDate(template.createdAt)}
                                 </p>
                               </div>
-                              <div className="space-y-1">
-                                <h4 className="font-medium">Subject</h4>
-                                <p>{template.subject}</p>
-                              </div>
-                              <div className="space-y-1">
-                                <h4 className="font-medium">Body</h4>
-                                <div className="border rounded-md p-3 whitespace-pre-wrap max-h-80 overflow-y-auto invisible-scrollbar">
-                                  {template.body}
+
+                              <div
+                                className={
+                                  "w-full border rounded-lg p-4 space-y-4"
+                                }
+                              >
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium">
+                                    Subject:
+                                  </Label>
+                                  <div className="text-base pl-2 border-l-2 text-sm">
+                                    {template.subject}
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium">
+                                    Body:
+                                  </Label>
+                                  <div
+                                    className="prose max-w-none pl-2 border-l-2 max-h-48 text-sm invisible-scrollbar overflow-y-scroll"
+                                    dangerouslySetInnerHTML={{
+                                      __html: template.body,
+                                    }}
+                                  />
                                 </div>
                               </div>
                             </div>

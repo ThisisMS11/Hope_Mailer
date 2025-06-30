@@ -27,6 +27,8 @@ import {
   EmailTemplateI,
   PlaceHolders,
 } from "@/features/emails/templates/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 
 interface EditTemplateModalProps {
   isEditModalOpen: boolean;
@@ -224,19 +226,57 @@ const EditTemplateModal: React.FC<EditTemplateModalProps> = ({
                     type something like &#123;&#123;firstName&#125;&#125; to see
                     available placeholders
                   </div>
+
                   <FormControl>
                     <div className="relative">
-                      <Textarea
-                        {...field}
-                        ref={editBodyRef}
-                        placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          handleEditInputChange(e, "body");
-                        }}
-                        className="min-h-[200px]"
-                        required
-                      />
+                      <Tabs defaultValue="body">
+                        <TabsList>
+                          <TabsTrigger value="body">Body</TabsTrigger>
+                          <TabsTrigger value="preview">Preview</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="body">
+                          <Textarea
+                            {...field}
+                            ref={editBodyRef}
+                            placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleEditInputChange(e, "body");
+                            }}
+                            className="min-h-[200px]"
+                            required
+                          />
+                        </TabsContent>
+
+                        <TabsContent value="preview">
+                          <div
+                            className={"w-full border rounded-lg p-4 space-y-4"}
+                          >
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">
+                                Subject:
+                              </Label>
+                              <div className="pl-2 border-l-2 text-sm">
+                                {editEmailTemplateFormData.getValues("subject")}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">
+                                Body:
+                              </Label>
+                              <div
+                                className="prose max-w-none pl-2 border-l-2 max-h-48 text-sm invisible-scrollbar overflow-y-scroll"
+                                dangerouslySetInnerHTML={{
+                                  __html:
+                                    editEmailTemplateFormData.getValues("body"),
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+
                       {showEditPlaceholders &&
                         editPlaceholderField === "body" && (
                           <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">

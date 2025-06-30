@@ -24,6 +24,8 @@ import useEmailTemplatesMutations, {
 } from "@/features/emails/templates/hooks/useEmailTemplatesMutations";
 import { z } from "zod";
 import { PlaceHolders } from "@/features/emails/templates/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 
 const CreateTemplateForm = () => {
   const { emailTemplateFormData, requestCreateEmailTemplate } =
@@ -194,17 +196,54 @@ const CreateTemplateForm = () => {
                   </div>
                   <FormControl>
                     <div className="relative">
-                      <Textarea
-                        {...field}
-                        ref={bodyRef}
-                        placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          handleInputChange(e, "body");
-                        }}
-                        className="min-h-[200px]"
-                        required
-                      />
+                      <Tabs defaultValue="body">
+                        <TabsList>
+                          <TabsTrigger value="body">Body</TabsTrigger>
+                          <TabsTrigger value="preview">Preview</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="body">
+                          <Textarea
+                            {...field}
+                            ref={bodyRef}
+                            placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleInputChange(e, "body");
+                            }}
+                            className="min-h-[200px]"
+                            required
+                          />
+                        </TabsContent>
+
+                        <TabsContent value="preview">
+                          <div
+                            className={"w-full border rounded-lg p-4 space-y-4"}
+                          >
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">
+                                Subject:
+                              </Label>
+                              <div className="text-base pl-2 border-l-2 text-sm">
+                                {emailTemplateFormData.getValues("subject")}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">
+                                Body:
+                              </Label>
+                              <div
+                                className="prose max-w-none pl-2 border-l-2 max-h-48 text-sm invisible-scrollbar overflow-y-scroll"
+                                dangerouslySetInnerHTML={{
+                                  __html:
+                                    emailTemplateFormData.getValues("body"),
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+
                       {showPlaceholders && placeholderField === "body" && (
                         <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
                           <div className="p-2 text-xs font-semibold border-b">
