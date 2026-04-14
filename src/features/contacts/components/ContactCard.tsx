@@ -102,12 +102,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
       peer
       appearance-none
       w-4 h-4
-      bg-white
-      border-2 border-gray-300
+      bg-white dark:bg-gray-800
+      border-2 border-gray-300 dark:border-gray-600
       rounded
       cursor-pointer
       transition
-      peer-checked:border-black
+      peer-checked:border-black dark:peer-checked:border-white
       peer-focus:outline-none
     "
         />
@@ -117,7 +117,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       pointer-events-none
       absolute top-0 left-0
       w-4 h-4
-      stroke-black
+      stroke-black dark:stroke-white
       stroke-[3px]
       opacity-0
       peer-checked:opacity-100
@@ -192,7 +192,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           )}
         </div>
         {/* Online dot — bottom-right */}
-        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-[#16151c]"></span>
       </div>
 
       {/* Name and Email */}
@@ -207,15 +207,15 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
       {/* Progress Bar */}
       <div className="w-full mt-4 px-4">
-        <div className="flex justify-between items-center text-xs text-gray-500 mb-1">
+        <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mb-1">
           <span className="flex gap-1">
-            <span className="w-2 h-2 bg-gray-400 rounded-full" />
+            <span className="w-2 h-2 bg-gray-400 dark:bg-gray-600 rounded-full" />
             <span className="w-2 h-2 bg-blue-600 rounded-full" />
             <span className="w-2 h-2 bg-blue-300 rounded-full" />
           </span>
           <span>{progressPercentage}%</span>
         </div>
-        <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-400"
             style={{ width: `${progressPercentage}%` }}

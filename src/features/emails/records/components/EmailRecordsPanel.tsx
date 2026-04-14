@@ -200,7 +200,7 @@ const EmailRecordsPanel = () => {
 
                               <div className="space-y-1">
                                 <h4 className="font-medium">Email Body</h4>
-                                <div className="border rounded-md p-3 whitespace-pre-wrap text-sm max-h-80 overflow-y-auto">
+                                <div className="border dark:border-gray-700 rounded-md p-3 bg-transparent whitespace-pre-wrap text-sm max-h-80 overflow-y-auto">
                                   {record.body}
                                 </div>
                               </div>

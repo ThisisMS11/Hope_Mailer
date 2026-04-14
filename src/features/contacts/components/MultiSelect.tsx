@@ -66,7 +66,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-[140px] h-10 rounded-lg border bg-gray-50 hover:bg-gray-100 dark:bg-secondary flex items-center justify-between"
+          className="w-[140px] h-10 rounded-lg border bg-gray-50 hover:bg-gray-100 dark:bg-secondary dark:hover:bg-gray-700 dark:border-gray-700 flex items-center justify-between"
         >
           <span className="text-sm truncate">{displayText}</span>
           <ChevronDown className="h-4 w-4 opacity-50" />

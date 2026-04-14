@@ -51,7 +51,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
           <Button
             variant="outline"
             size="sm"
-            className="h-10 rounded-lg bg-gray-50 hover:bg-gray-100 border"
+            className="h-10 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 border"
           >
             <Funnel />
             <ChevronDown className="w-4 h-4 ml-1 opacity-60" />
@@ -89,11 +89,11 @@ const FilterBox: React.FC<FilterBoxProps> = ({
       <div className="flex-1" />
 
       {/* Sort By */}
-      <span className="text-sm text-gray-600 mr-2">Sort by:</span>
+      <span className="text-sm text-gray-600 dark:text-gray-300 mr-2">Sort by:</span>
       <Button
         variant="ghost"
         size="sm"
-        className="h-10 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 border"
+        className="h-10 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 border"
       >
         All
       </Button>

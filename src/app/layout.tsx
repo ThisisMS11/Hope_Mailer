@@ -40,7 +40,7 @@ export default function RootLayout({
           fontOpenSans.className,
           fontSans.className,
           "min-h-screen",
-          "bg-gray-50",
+          "bg-gray-50 dark:bg-[#09090b]",
         )}
       >
         <Toaster richColors />
