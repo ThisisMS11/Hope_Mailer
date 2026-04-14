@@ -160,13 +160,21 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
       {/* Profile Image with border and online dot */}
       <div className="relative">
-        <Image
-          src={contact.logo}
-          alt={`${contact.firstName} ${contact.lastName}`}
-          width={100}
-          height={100}
-          className="w-20 h-20 rounded-full border-4 border-blue-200"
-        />
+        {contact.logo ? (
+          <Image
+            src={contact.logo}
+            alt={`${contact.firstName} ${contact.lastName}`}
+            width={100}
+            height={100}
+            className="w-20 h-20 rounded-full border-4 border-blue-200 object-contain"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-full border-4 border-blue-200 bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+            <span className="text-2xl font-bold text-blue-600 dark:text-blue-300">
+              {contact.companyName?.charAt(0)?.toUpperCase() || "?"}
+            </span>
+          </div>
+        )}
         <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
       </div>
 

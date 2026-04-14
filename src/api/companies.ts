@@ -10,7 +10,14 @@ export const getCompaniesApiFunc = async (): Promise<
   ResponseBody<CompanyList>
 > => {
   const response = await axios.get("/company");
-  return response.data;
+  const data: ResponseBody<CompanyList> = response.data;
+  if (data.data) {
+    data.data = data.data.map((company) => ({
+      ...company,
+      logo: company.logo || (company.domain ? `https://logo.clearbit.com/${company.domain}` : ""),
+    }));
+  }
+  return data;
 };
 
 export const createCompanyApiFunc = async (
