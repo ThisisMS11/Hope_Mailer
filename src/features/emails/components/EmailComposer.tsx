@@ -98,13 +98,14 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
   // Handle subject input with placeholder detection
   const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+    const cursorPos = e.target.selectionStart ?? value.length;
 
-    // Check if we just typed {{
-    const lastTwoChars = value.slice(-2);
+    // Check if the 2 chars just before the cursor are {{
+    const lastTwoChars = value.slice(0, cursorPos).slice(-2);
     if (lastTwoChars === "{{") {
       setShowPlaceholders(true);
       setPlaceholderField("subject");
-      setCursorPosition(e.target.selectionStart);
+      setCursorPosition(cursorPos);
     } else {
       setShowPlaceholders(false);
     }
@@ -117,13 +118,14 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
   const handleBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
     emailFormData.setValue("body", value);
+    const cursorPos = e.target.selectionStart ?? value.length;
 
-    // Check if we just typed {{
-    const lastTwoChars = value.slice(-2);
+    // Check if the 2 chars just before the cursor are {{
+    const lastTwoChars = value.slice(0, cursorPos).slice(-2);
     if (lastTwoChars === "{{") {
       setShowPlaceholders(true);
       setPlaceholderField("body");
-      setCursorPosition(e.target.selectionStart);
+      setCursorPosition(cursorPos);
     } else {
       setShowPlaceholders(false);
     }
