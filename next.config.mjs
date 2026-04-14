@@ -10,7 +10,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "logo.clearbit.com",
+        hostname: "t2.gstatic.com",
         port: "",
         pathname: "/**",
       },

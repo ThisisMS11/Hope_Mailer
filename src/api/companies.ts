@@ -14,7 +14,7 @@ export const getCompaniesApiFunc = async (): Promise<
   if (data.data) {
     data.data = data.data.map((company) => ({
       ...company,
-      logo: company.logo || (company.domain ? `https://logo.clearbit.com/${company.domain}` : ""),
+      logo: company.logo || (company.domain ? `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${company.domain}&size=128` : ""),
     }));
   }
   return data;
