@@ -18,6 +18,7 @@ import {
 } from "@/imports/Shadcn_imports";
 import useCompanyMutations from "@/features/contacts/hooks/useCompanyMutations";
 import Image from "next/image";
+import { getCompanyLogoUrl } from "@/utils/constants";
 import CustomLoader from "@/components/CustomLoader";
 
 type YourFormType = z.infer<typeof contactFormSchema>;
@@ -96,7 +97,13 @@ const AddEmployeeCompany: React.FC<AddEmployeeCompanyProps> = ({
         `https://autocomplete.clearbit.com/v1/companies/suggest?query=${query}`,
       );
       const data = await response.json();
-      setFilteredItems(data);
+      const normalized = data.map((company: CompanyI) => ({
+        ...company,
+        logo: company.domain
+          ? getCompanyLogoUrl(company.domain)
+          : "",
+      }));
+      setFilteredItems(normalized);
     } catch (error) {
       console.error("Failed to fetch suggestions from Clearbit", error);
     }

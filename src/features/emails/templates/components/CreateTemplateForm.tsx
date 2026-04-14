@@ -57,11 +57,12 @@ const CreateTemplateForm = () => {
     field: "subject" | "body",
   ) => {
     const value = e.target.value;
-    const lastTwoChars = value.slice(-2);
+    const cursorPos = e.target.selectionStart ?? value.length;
+    const lastTwoChars = value.slice(0, cursorPos).slice(-2);
     if (lastTwoChars === "{{") {
       setShowPlaceholders(true);
       setPlaceholderField(field);
-      setCursorPosition(e.target.selectionStart);
+      setCursorPosition(cursorPos);
     } else {
       setShowPlaceholders(false);
     }

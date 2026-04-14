@@ -5,6 +5,7 @@ import {
   CompanyI,
 } from "@/features/contacts/types";
 import { ResponseBody } from "@/types";
+import { getCompanyLogoUrl } from "@/utils/constants";
 
 export const getCompaniesApiFunc = async (): Promise<
   ResponseBody<CompanyList>
@@ -14,7 +15,7 @@ export const getCompaniesApiFunc = async (): Promise<
   if (data.data) {
     data.data = data.data.map((company) => ({
       ...company,
-      logo: company.logo || (company.domain ? `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${company.domain}&size=128` : ""),
+      logo: company.logo || (company.domain ? getCompanyLogoUrl(company.domain) : ""),
     }));
   }
   return data;

@@ -12,11 +12,13 @@ export interface ContactRequestBody {
   experience: number;
   valid: boolean;
   companyId: number;
+  profileImageUrl?: string;
 }
 
 export interface ContactI extends ContactRequestBody {
   id: number;
   companyName: string;
+  companyDomain?: string;
   logo: string;
 }
 

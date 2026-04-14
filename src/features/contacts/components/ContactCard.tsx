@@ -158,24 +158,41 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </DropdownMenu>
       </div>
 
-      {/* Profile Image with border and online dot */}
+      {/* Profile Image with border, company logo badge, and online dot */}
       <div className="relative">
-        {contact.logo ? (
+        {contact.profileImageUrl ? (
           <Image
-            src={contact.logo}
+            src={contact.profileImageUrl}
             alt={`${contact.firstName} ${contact.lastName}`}
             width={100}
             height={100}
-            className="w-20 h-20 rounded-full border-4 border-blue-200 object-contain"
+            className="w-20 h-20 rounded-full border-4 border-blue-200 object-cover"
           />
         ) : (
           <div className="w-20 h-20 rounded-full border-4 border-blue-200 bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
             <span className="text-2xl font-bold text-blue-600 dark:text-blue-300">
-              {contact.companyName?.charAt(0)?.toUpperCase() || "?"}
+              {contact.firstName?.charAt(0)?.toUpperCase() || "?"}
             </span>
           </div>
         )}
-        <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+        {/* Company logo — bottom-left badge */}
+        <div className="absolute -bottom-1 -left-1 w-7 h-7 rounded-full border-2 border-white dark:border-[#16151c] bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+          {contact.logo ? (
+            <Image
+              src={contact.logo}
+              alt={contact.companyName}
+              width={28}
+              height={28}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <span className="text-[9px] font-bold text-gray-500">
+              {contact.companyName?.charAt(0)?.toUpperCase() || "?"}
+            </span>
+          )}
+        </div>
+        {/* Online dot — bottom-right */}
+        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
       </div>
 
       {/* Name and Email */}

@@ -10,6 +10,7 @@ import {
   Button,
 } from "@/imports/Shadcn_imports";
 import Image from "next/image";
+import { getCompanyLogoUrl } from "@/utils/constants";
 import { Building2 } from "lucide-react";
 
 const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
@@ -56,7 +57,13 @@ const AddEmployeeCompany: React.FC<any> = ({ formData, setFormData }: any) => {
         `https://autocomplete.clearbit.com/v1/companies/suggest?query=${query}`,
       );
       const data = await response.json();
-      setFilteredItems(data);
+      const normalized = data.map((company: any) => ({
+        ...company,
+        logo: company.domain
+          ? getCompanyLogoUrl(company.domain)
+          : "",
+      }));
+      setFilteredItems(normalized);
     } catch (error) {
       console.error("Failed to fetch suggestions from Clearbit", error);
     }
