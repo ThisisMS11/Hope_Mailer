@@ -1,12 +1,6 @@
 import React, { useState, useRef } from "react";
 import {
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogContent,
   DialogTrigger,
@@ -33,6 +27,8 @@ import {
   File,
   ExternalLink,
   Link,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import { FileI, FileType } from "@/features/files/types";
 import { formatBytes } from "@/lib/utils";
@@ -51,44 +47,30 @@ const FilesPanel = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Function to handle file input change
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFileUpload(e.target.files);
-    }
+    if (e.target.files && e.target.files.length > 0) handleFileUpload(e.target.files);
   };
 
-  // Function to handle file upload
   const handleFileUpload = (fileList: FileList) => {
     setIsUploading(true);
-
-    // Simulate upload progress
     let progress = 0;
     const interval = setInterval(() => {
       progress += 10;
       setUploadProgress(progress);
-
       if (progress >= 100) {
         clearInterval(interval);
-
-        // Create new file objects from the uploaded files
-        const newFiles: FileI[] = Array.from(fileList).map((file, index) => {
-          const fileType = getFileType(file.type);
-          return {
-            id: Date.now() + index,
-            originalFileName: file.name,
-            gcsFileName: `files/${file.name.replace(/\s+/g, "-")}-${Date.now()}`,
-            publicUrl: URL.createObjectURL(file), // Temporary URL for demo
-            contentType: file.type,
-            size: file.size,
-            bucketName: "my-bucket",
-            fileType: fileType,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
-        });
-
-        // Add new files to the state
+        const newFiles: FileI[] = Array.from(fileList).map((file, index) => ({
+          id: Date.now() + index,
+          originalFileName: file.name,
+          gcsFileName: `files/${file.name.replace(/\s+/g, "-")}-${Date.now()}`,
+          publicUrl: URL.createObjectURL(file),
+          contentType: file.type,
+          size: file.size,
+          bucketName: "my-bucket",
+          fileType: getFileType(file.type),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }));
         setFiles([...newFiles, ...files]);
         setIsUploading(false);
         setUploadProgress(0);
@@ -96,605 +78,359 @@ const FilesPanel = () => {
     }, 300);
   };
 
-  // Function to handle URL submission
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setUrlError("");
-
-    if (!urlInput) {
-      setUrlError("Please enter a URL");
-      return;
-    }
-
-    if (!urlFileName) {
-      setUrlError("Please enter a file name");
-      return;
-    }
-
-    // Create a new file object from the URL
-    const fileExtension = getFileExtensionFromUrl(urlInput);
-    const contentType = getContentTypeFromExtension(fileExtension);
-    const fileType = getFileTypeFromExtension(fileExtension);
-
+    if (!urlInput) { setUrlError("Please enter a URL"); return; }
+    if (!urlFileName) { setUrlError("Please enter a file name"); return; }
+    const ext = getFileExtensionFromUrl(urlInput);
     const newFile: FileI = {
       id: Date.now(),
-      originalFileName:
-        urlFileName + (fileExtension ? `.${fileExtension}` : ""),
+      originalFileName: urlFileName + (ext ? `.${ext}` : ""),
       gcsFileName: `files/${urlFileName.replace(/\s+/g, "-")}-${Date.now()}`,
       publicUrl: urlInput,
-      contentType: contentType,
-      size: 0, // Size unknown for URL resources
+      contentType: getContentTypeFromExtension(ext),
+      size: 0,
       bucketName: "external-resource",
-      fileType: fileType,
+      fileType: getFileTypeFromExtension(ext),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-
-    // Add a new file to the state
     setFiles([newFile, ...files]);
-
-    // Reset form
     setUrlInput("");
     setUrlFileName("");
   };
 
-  // Helper function to get file extension from URL
   const getFileExtensionFromUrl = (url: string): string => {
     try {
-      const urlObj = new URL(url);
-      const pathname = urlObj.pathname;
-      const lastDotIndex = pathname.lastIndexOf(".");
-
-      if (lastDotIndex !== -1) {
-        return pathname.slice(lastDotIndex + 1).toLowerCase();
-      }
-      return "";
-    } catch (e) {
-      return "";
-    }
+      const pathname = new URL(url).pathname;
+      const i = pathname.lastIndexOf(".");
+      return i !== -1 ? pathname.slice(i + 1).toLowerCase() : "";
+    } catch { return ""; }
   };
 
-  // Helper function to get content type from extension
-  const getContentTypeFromExtension = (extension: string): string => {
-    const contentTypes: Record<string, string> = {
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      png: "image/png",
-      gif: "image/gif",
-      pdf: "application/pdf",
-      doc: "application/msword",
+  const getContentTypeFromExtension = (ext: string): string => {
+    const map: Record<string, string> = {
+      jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", gif: "image/gif",
+      pdf: "application/pdf", doc: "application/msword",
       docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      mp4: "video/mp4",
-      mov: "video/quicktime",
-      avi: "video/x-msvideo",
+      mp4: "video/mp4", mov: "video/quicktime", avi: "video/x-msvideo",
     };
-
-    return contentTypes[extension] || "application/octet-stream";
+    return map[ext] || "application/octet-stream";
   };
 
-  // Helper function to get a file type from extension
-  const getFileTypeFromExtension = (extension: string): FileType => {
-    const imageExts = ["jpg", "jpeg", "png", "gif", "webp", "bmp"];
-    const videoExts = ["mp4", "mov", "avi", "webm", "mkv"];
-    const docExts = [
-      "pdf",
-      "doc",
-      "docx",
-      "txt",
-      "csv",
-      "xls",
-      "xlsx",
-      "ppt",
-      "pptx",
-    ];
-
-    if (imageExts.includes(extension)) {
-      return FileType.IMAGE;
-    } else if (videoExts.includes(extension)) {
-      return FileType.VIDEO;
-    } else if (docExts.includes(extension)) {
-      return FileType.DOCUMENT;
-    }
-
+  const getFileTypeFromExtension = (ext: string): FileType => {
+    if (["jpg","jpeg","png","gif","webp","bmp"].includes(ext)) return FileType.IMAGE;
+    if (["mp4","mov","avi","webm","mkv"].includes(ext)) return FileType.VIDEO;
+    if (["pdf","doc","docx","txt","csv","xls","xlsx","ppt","pptx"].includes(ext)) return FileType.DOCUMENT;
     return FileType.UNKNOWN;
   };
 
-  // Function to determine a file type based on mime type
   const getFileType = (mimeType: string): FileType => {
-    if (mimeType.startsWith("image/")) {
-      return FileType.IMAGE;
-    } else if (mimeType.startsWith("video/")) {
-      return FileType.VIDEO;
-    } else if (
-      mimeType === "application/pdf" ||
-      mimeType.includes("document") ||
-      mimeType.includes("text/")
-    ) {
-      return FileType.DOCUMENT;
-    }
+    if (mimeType.startsWith("image/")) return FileType.IMAGE;
+    if (mimeType.startsWith("video/")) return FileType.VIDEO;
+    if (mimeType === "application/pdf" || mimeType.includes("document") || mimeType.includes("text/")) return FileType.DOCUMENT;
     return FileType.UNKNOWN;
   };
 
-  // Function to get file icon based on a file type
-  const getFileIcon = (fileType: FileType, __contentType: string) => {
+  const getFileIcon = (fileType: FileType, size = "md") => {
+    const s = size === "sm" ? "h-5 w-5" : "h-8 w-8";
     switch (fileType) {
-      case FileType.IMAGE:
-        return <ImageIcon className="h-8 w-8 text-blue-500" />;
-      case FileType.VIDEO:
-        return <Video className="h-8 w-8 text-purple-500" />;
-      case FileType.DOCUMENT:
-        return <FileText className="h-8 w-8 text-amber-500" />;
-      default:
-        return <File className="h-8 w-8 text-gray-500" />;
+      case FileType.IMAGE: return <ImageIcon className={`${s} text-blue-500 dark:text-blue-400`} />;
+      case FileType.VIDEO: return <Video className={`${s} text-violet-500 dark:text-violet-400`} />;
+      case FileType.DOCUMENT: return <FileText className={`${s} text-amber-500 dark:text-amber-400`} />;
+      default: return <File className={`${s} text-gray-400 dark:text-gray-500`} />;
     }
   };
 
-  // Function to format file date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
-  // Function to handle file deletion
   const handleDeleteFile = (id: number) => {
     if (confirm("Are you sure you want to delete this file?")) {
-      setFiles(files.filter((file) => file.id !== id));
+      setFiles(files.filter((f) => f.id !== id));
     }
   };
 
-  // Drag and drop handlers
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileUpload(e.dataTransfer.files);
-    }
+    if (e.dataTransfer.files?.length > 0) handleFileUpload(e.dataTransfer.files);
   };
 
-  // Function to trigger file input click
-  const handleFileInputClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  // Function to get file preview
-  const getFilePreview = (file: FileI) => {
-    if (file.fileType === FileType.IMAGE) {
-      return (
-        <Image
-          src={file.publicUrl}
-          alt={file.originalFileName}
-          width={400}
-          height={400}
-          className="w-full h-32 object-cover rounded-t-md"
-        />
-      );
-    } else {
-      return (
-        <div className="w-full h-32 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-t-md">
-          {getFileIcon(file.fileType, file.contentType)}
+  const FileDetailDialog = ({ file }: { file: FileI }) => (
+    <DialogContent className="sm:max-w-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/60 dark:border-white/[0.08]">
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{file.originalFileName}</h3>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Uploaded {formatDate(file.createdAt)}</p>
         </div>
-      );
-    }
-  };
+        {file.fileType === FileType.IMAGE && (
+          <Image src={file.publicUrl} alt={file.originalFileName} width={400} height={400} className="w-full rounded-xl object-cover" />
+        )}
+        <div className="rounded-xl border border-gray-100 dark:border-white/[0.06] overflow-hidden">
+          {[
+            ["Type", file.contentType],
+            ["Size", formatBytes(file.size)],
+            ["Uploaded", formatDate(file.createdAt)],
+          ].map(([label, val]) => (
+            <div key={label} className="flex justify-between px-4 py-2.5 border-b last:border-0 border-gray-100/60 dark:border-white/[0.04] text-sm">
+              <span className="text-gray-400 dark:text-gray-500">{label}</span>
+              <span className="text-gray-700 dark:text-gray-300 font-medium">{val}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1 text-xs border-white/60 dark:border-white/[0.08] bg-white/40 dark:bg-white/[0.04]" onClick={() => window.open(file.publicUrl, "_blank")}>
+            <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open
+          </Button>
+          <Button variant="outline" size="sm" className="flex-1 text-xs border-white/60 dark:border-white/[0.08] bg-white/40 dark:bg-white/[0.04]" onClick={() => window.open(file.publicUrl, "_blank")}>
+            <Download className="h-3.5 w-3.5 mr-1.5" /> Download
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  );
 
   return (
-    <div>
-      {/* Heading */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Files</h1>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
-            size="sm"
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Files</h1>
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-white/50 dark:bg-white/[0.04] backdrop-blur-sm border border-white/70 dark:border-white/[0.08]">
+          <button
             onClick={() => setViewMode("grid")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              viewMode === "grid"
+                ? "bg-violet-500/90 text-white shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            }`}
           >
-            Grid View
-          </Button>
-          <Button
-            variant={viewMode === "table" ? "default" : "outline"}
-            size="sm"
+            <LayoutGrid className="h-3.5 w-3.5" /> Grid
+          </button>
+          <button
             onClick={() => setViewMode("table")}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              viewMode === "table"
+                ? "bg-violet-500/90 text-white shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            }`}
           >
-            Table View
-          </Button>
+            <List className="h-3.5 w-3.5" /> Table
+          </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* File Upload Card with Tabs */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Add Files</CardTitle>
-            <CardDescription>Upload files or add from URL</CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Upload Panel */}
+        <div className="lg:col-span-1 bg-white/50 backdrop-blur-md border border-white/70 dark:bg-white/[0.04] dark:border-white/[0.08] shadow-xl shadow-black/[0.06] dark:shadow-black/25 rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100/60 dark:border-white/[0.06]">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Add Files</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Upload files or add from URL</p>
+          </div>
+          <div className="p-5">
             <Tabs defaultValue="upload" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="upload">Upload Files</TabsTrigger>
-                <TabsTrigger value="url">Add from URL</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/50 dark:bg-white/[0.04] border border-white/60 dark:border-white/[0.08] rounded-xl p-1 h-auto">
+                <TabsTrigger value="upload" className="rounded-lg text-xs data-[state=active]:bg-violet-500/90 data-[state=active]:text-white data-[state=active]:shadow-sm py-1.5">
+                  Upload Files
+                </TabsTrigger>
+                <TabsTrigger value="url" className="rounded-lg text-xs data-[state=active]:bg-violet-500/90 data-[state=active]:text-white data-[state=active]:shadow-sm py-1.5">
+                  Add from URL
+                </TabsTrigger>
               </TabsList>
 
-              {/* Upload Tab Content */}
               <TabsContent value="upload">
                 <div
-                  className={`border-2 border-dashed rounded-md p-6 text-center ${
+                  className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
                     dragActive
-                      ? "border-primary bg-primary/5"
-                      : "border-gray-300 dark:border-gray-600"
+                      ? "border-violet-400 bg-violet-500/5 dark:border-violet-400/40 dark:bg-violet-500/[0.05]"
+                      : "border-gray-200/80 dark:border-white/[0.08] hover:border-violet-300 dark:hover:border-violet-400/30 hover:bg-violet-500/[0.03]"
                   }`}
                   onDragEnter={handleDrag}
                   onDragOver={handleDrag}
                   onDragLeave={handleDrag}
                   onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    className="hidden"
-                    onChange={handleFileInputChange}
-                  />
-                  <FileUp className="h-12 w-12 mx-auto text-gray-400" />
-                  <p className="mt-2 text-sm font-medium">
-                    Drag and drop files here, or click to browse
+                  <Input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileInputChange} />
+                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 dark:bg-violet-400/10 flex items-center justify-center mx-auto mb-3">
+                    <FileUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Drag & drop files here
                   </p>
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    Supports images, documents, and videos
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="mt-4"
-                    onClick={handleFileInputClick}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Select Files
-                  </Button>
+                  <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">or click to browse</p>
+                  <p className="text-xs text-gray-300 dark:text-gray-700 mt-2">Images, documents, videos</p>
                 </div>
 
                 {isUploading && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium mb-2">Uploading...</p>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                      <div
-                        className="bg-primary h-2.5 rounded-full"
-                        style={{ width: `${uploadProgress}%` }}
-                      ></div>
+                  <div className="mt-4 space-y-1.5">
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
                     </div>
-                    <p className="text-xs text-right mt-1">{uploadProgress}%</p>
+                    <div className="w-full bg-gray-100 dark:bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-violet-500 dark:bg-violet-400 h-full rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                    </div>
                   </div>
                 )}
               </TabsContent>
 
-              {/* URL Tab Content */}
               <TabsContent value="url">
                 <form onSubmit={handleUrlSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <label htmlFor="url-input" className="text-sm font-medium">
-                      File URL
-                    </label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">File URL</label>
                     <Input
-                      id="url-input"
                       type="url"
                       placeholder="https://example.com/file.pdf"
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
+                      className="bg-white/50 dark:bg-white/[0.04] border-white/70 dark:border-white/[0.08] text-sm"
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="file-name" className="text-sm font-medium">
-                      File Name
-                    </label>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400">File Name</label>
                     <Input
-                      id="file-name"
                       type="text"
                       placeholder="Enter a name for this file"
                       value={urlFileName}
                       onChange={(e) => setUrlFileName(e.target.value)}
+                      className="bg-white/50 dark:bg-white/[0.04] border-white/70 dark:border-white/[0.08] text-sm"
                     />
-                    <p className="text-xs text-muted-foreground">
-                      The file extension will be detected from the URL
-                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600">Extension is detected from the URL</p>
                   </div>
-
-                  {urlError && (
-                    <div className="text-sm text-destructive">{urlError}</div>
-                  )}
-
-                  <Button type="submit" className="w-full">
-                    <Link className="h-4 w-4 mr-2" />
-                    Add from URL
+                  {urlError && <p className="text-xs text-red-500 dark:text-red-400">{urlError}</p>}
+                  <Button type="submit" className="w-full bg-violet-500/90 hover:bg-violet-600/90 dark:bg-violet-500/25 dark:hover:bg-violet-500/35 dark:text-violet-300 text-white border border-violet-400/30 dark:border-violet-400/20 text-sm">
+                    <Link className="h-4 w-4 mr-2" /> Add from URL
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Files Display Card */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Your Files</CardTitle>
-            <CardDescription>Manage your uploaded files</CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Files Display */}
+        <div className="lg:col-span-2 bg-white/50 backdrop-blur-md border border-white/70 dark:bg-white/[0.04] dark:border-white/[0.08] shadow-xl shadow-black/[0.06] dark:shadow-black/25 rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100/60 dark:border-white/[0.06] flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Your Files</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Manage your uploaded files</p>
+            </div>
+            <span className="text-xs text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-white/[0.04] px-2 py-0.5 rounded-full">
+              {files.length} files
+            </span>
+          </div>
+
+          <div className="p-5">
             {files.length === 0 ? (
-              <div className="text-center py-6 text-muted-foreground">
-                No files yet. Upload your first file.
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/[0.04] flex items-center justify-center mb-3">
+                  <File className="h-5 w-5 text-gray-400" />
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No files yet</p>
+                <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">Upload your first file to get started</p>
               </div>
             ) : viewMode === "grid" ? (
-              // Grid View
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {files.map((file) => (
-                  <Card key={file.id} className="overflow-hidden">
-                    {getFilePreview(file)}
-                    <CardContent className="p-3">
-                      <h3
-                        className="font-medium text-sm truncate"
-                        title={file.originalFileName}
-                      >
-                        {file.originalFileName}
-                      </h3>
-                      <div className="flex justify-between items-center mt-1">
-                        <p className="text-xs text-gray-500">
-                          {formatBytes(file.size)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(file.createdAt)}
-                        </p>
+                  <div key={file.id} className="group rounded-xl bg-white/60 dark:bg-white/[0.04] border border-white/70 dark:border-white/[0.07] overflow-hidden hover:shadow-lg hover:shadow-black/[0.06] dark:hover:shadow-black/20 hover:-translate-y-0.5 transition-all duration-200">
+                    {/* Preview */}
+                    {file.fileType === FileType.IMAGE ? (
+                      <Image src={file.publicUrl} alt={file.originalFileName} width={400} height={128} className="w-full h-32 object-cover" />
+                    ) : (
+                      <div className="w-full h-32 flex items-center justify-center bg-gray-50/80 dark:bg-white/[0.02]">
+                        {getFileIcon(file.fileType)}
                       </div>
-                    </CardContent>
-                    <CardFooter className="p-2 pt-0 flex justify-end gap-1">
+                    )}
+                    {/* Info */}
+                    <div className="p-3">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate" title={file.originalFileName}>
+                        {file.originalFileName}
+                      </p>
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-xs text-gray-400 dark:text-gray-600">{formatBytes(file.size)}</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-600">{formatDate(file.createdAt)}</span>
+                      </div>
+                    </div>
+                    {/* Actions */}
+                    <div className="px-3 pb-3 flex justify-end gap-1">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <FileText className="h-4 w-4" />
-                          </Button>
+                          <button className="h-7 w-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-all">
+                            <FileText className="h-3.5 w-3.5" />
+                          </button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                          <div className="space-y-4">
-                            <div>
-                              <h3 className="text-lg font-semibold">
-                                {file.originalFileName}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                Uploaded: {formatDate(file.createdAt)}
-                              </p>
-                            </div>
-                            <div className="space-y-1">
-                              <h4 className="font-medium">File Details</h4>
-                              <div className="text-sm space-y-2">
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    Type:
-                                  </span>
-                                  <span>{file.contentType}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    Size:
-                                  </span>
-                                  <span>{formatBytes(file.size)}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    Uploaded:
-                                  </span>
-                                  <span>{formatDate(file.createdAt)}</span>
-                                </div>
-                              </div>
-                            </div>
-                            {file.fileType === FileType.IMAGE && (
-                              <div className="mt-4">
-                                <Image
-                                  src={file.publicUrl}
-                                  alt={file.originalFileName}
-                                  width={20}
-                                  height={20}
-                                  className="w-full rounded-md"
-                                />
-                              </div>
-                            )}
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  window.open(file.publicUrl, "_blank")
-                                }
-                              >
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                Open
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  window.open(file.publicUrl, "_blank")
-                                }
-                              >
-                                <Download className="h-4 w-4 mr-2" />
-                                Download
-                              </Button>
-                            </div>
-                          </div>
-                        </DialogContent>
+                        <FileDetailDialog file={file} />
                       </Dialog>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0"
+                      <button
+                        className="h-7 w-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-all"
                         onClick={() => window.open(file.publicUrl, "_blank")}
                       >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive/90"
+                        <Download className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        className="h-7 w-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
                         onClick={() => handleDeleteFile(file.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
-              // Table View
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-gray-100/60 dark:border-white/[0.06] hover:bg-transparent">
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Name</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Type</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Size</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Date</TableHead>
+                    <TableHead className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600 text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {files.map((file) => (
+                    <TableRow key={file.id} className="border-b border-gray-100/40 dark:border-white/[0.04] hover:bg-white/40 dark:hover:bg-white/[0.03] transition-colors">
+                      <TableCell className="py-3">
+                        <div className="flex items-center gap-2.5">
+                          {getFileIcon(file.fileType, "sm")}
+                          <span className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate max-w-[160px]">{file.originalFileName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-xs text-gray-400 dark:text-gray-500 py-3">{file.contentType}</TableCell>
+                      <TableCell className="text-sm text-gray-500 dark:text-gray-400 py-3">{formatBytes(file.size)}</TableCell>
+                      <TableCell className="text-sm text-gray-500 dark:text-gray-400 py-3">{formatDate(file.createdAt)}</TableCell>
+                      <TableCell className="py-3 text-right">
+                        <div className="flex justify-end gap-1">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className="h-7 px-2.5 rounded-lg text-xs text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-500/10 transition-all">View</button>
+                            </DialogTrigger>
+                            <FileDetailDialog file={file} />
+                          </Dialog>
+                          <button className="h-7 w-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-all" onClick={() => window.open(file.publicUrl, "_blank")}>
+                            <Download className="h-3.5 w-3.5" />
+                          </button>
+                          <button className="h-7 w-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all" onClick={() => handleDeleteFile(file.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {files.map((file) => (
-                      <TableRow key={file.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            {getFileIcon(file.fileType, file.contentType)}
-                            <span className="truncate max-w-[200px]">
-                              {file.originalFileName}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{file.contentType}</TableCell>
-                        <TableCell>{formatBytes(file.size)}</TableCell>
-                        <TableCell>{formatDate(file.createdAt)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                  View
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-md">
-                                <div className="space-y-4">
-                                  <div>
-                                    <h3 className="text-lg font-semibold">
-                                      {file.originalFileName}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground">
-                                      Uploaded: {formatDate(file.createdAt)}
-                                    </p>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <h4 className="font-medium">
-                                      File Details
-                                    </h4>
-                                    <div className="text-sm space-y-2">
-                                      <div className="flex justify-between">
-                                        <span className="text-muted-foreground">
-                                          Type:
-                                        </span>
-                                        <span>{file.contentType}</span>
-                                      </div>
-                                      <div className="flex justify-between">
-                                        <span className="text-muted-foreground">
-                                          Size:
-                                        </span>
-                                        <span>{formatBytes(file.size)}</span>
-                                      </div>
-                                      <div className="flex justify-between">
-                                        <span className="text-muted-foreground">
-                                          Uploaded:
-                                        </span>
-                                        <span>
-                                          {formatDate(file.createdAt)}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  {file.fileType === FileType.IMAGE && (
-                                    <div className="mt-4">
-                                      <Image
-                                        src={file.publicUrl}
-                                        alt={file.originalFileName}
-                                        className="w-full rounded-md"
-                                        width={400}
-                                        height={400}
-                                      />
-                                    </div>
-                                  )}
-                                  <div className="flex justify-end gap-2">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        window.open(file.publicUrl, "_blank")
-                                      }
-                                    >
-                                      <ExternalLink className="h-4 w-4 mr-2" />
-                                      Open
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() =>
-                                        window.open(file.publicUrl, "_blank")
-                                      }
-                                    >
-                                      <Download className="h-4 w-4 mr-2" />
-                                      Download
-                                    </Button>
-                                  </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                window.open(file.publicUrl, "_blank")
-                              }
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteFile(file.id)}
-                              className="text-destructive hover:text-destructive/90"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                  ))}
+                </TableBody>
+              </Table>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

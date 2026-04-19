@@ -1,12 +1,4 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Form,
   FormControl,
   FormField,
@@ -31,27 +23,19 @@ const CreateTemplateForm = () => {
   const { emailTemplateFormData, requestCreateEmailTemplate } =
     useEmailTemplatesMutations();
 
-  // Refs for input fields (add form)
   const subjectRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
 
-  // Placeholder suggestion state for an added form
   const [showPlaceholders, setShowPlaceholders] = useState(false);
-  const [placeholderField, setPlaceholderField] = useState<
-    "subject" | "body" | null
-  >(null);
+  const [placeholderField, setPlaceholderField] = useState<"subject" | "body" | null>(null);
   const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
   const placeholders = Object.values(PlaceHolders);
 
-  const handleAddEmailTemplate = (
-    values: z.infer<typeof emailTemplateFormSchema>,
-  ) => {
+  const handleAddEmailTemplate = (values: z.infer<typeof emailTemplateFormSchema>) => {
     requestCreateEmailTemplate.mutate(values);
-    console.log("Adding template:", values);
   };
 
-  // Handle input change for an add form
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: "subject" | "body",
@@ -68,18 +52,14 @@ const CreateTemplateForm = () => {
     }
   };
 
-  // Handle selecting a placeholder for add form
   const handleSelectPlaceholder = (placeholder: string) => {
     if (!placeholderField || cursorPosition === null) return;
-
     const currentValue = emailTemplateFormData.getValues(placeholderField);
     const newValue =
       currentValue.slice(0, cursorPosition - 2) +
       placeholder +
       currentValue.slice(cursorPosition);
-
     emailTemplateFormData.setValue(placeholderField, newValue);
-
     setTimeout(() => {
       const ref = placeholderField === "subject" ? subjectRef : bodyRef;
       if (ref.current) {
@@ -88,50 +68,40 @@ const CreateTemplateForm = () => {
         ref.current.setSelectionRange(newCursorPos, newCursorPos);
       }
     }, 0);
-
     setShowPlaceholders(false);
   };
 
-  const resetAddForm = () => {
-    emailTemplateFormData.reset();
-  };
-
-  // Close the placeholder menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      setShowPlaceholders(false);
-    };
+    const handleClickOutside = () => setShowPlaceholders(false);
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <Card className="lg:col-span-1">
-      <CardHeader>
-        <CardTitle>Add New Template</CardTitle>
-        <CardDescription>
-          Create a new email template to use later
-        </CardDescription>
-      </CardHeader>
+    <div className="lg:col-span-1 bg-white/50 backdrop-blur-md border border-white/70 dark:bg-white/[0.04] dark:border-white/[0.08] shadow-xl shadow-black/[0.06] dark:shadow-black/25 rounded-2xl overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-gray-100/60 dark:border-white/[0.06]">
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">New Template</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Create a reusable email template</p>
+      </div>
 
       <Form {...emailTemplateFormData}>
         <form
           onSubmit={emailTemplateFormData.handleSubmit(handleAddEmailTemplate)}
+          className="flex flex-col flex-1"
         >
-          <CardContent className="space-y-4">
+          <div className="p-5 space-y-4 flex-1">
             <FormField
-              name={"name"}
+              name="name"
               control={emailTemplateFormData.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Template Name</FormLabel>
+                  <FormLabel className="text-xs font-medium text-gray-600 dark:text-gray-400">Template Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g. Welcome Email"
-                      required
+                      placeholder="e.g. Cold Outreach"
+                      className="bg-white/50 dark:bg-white/[0.04] border-white/70 dark:border-white/[0.08] text-sm"
                     />
                   </FormControl>
                   <FormMessage />
@@ -140,39 +110,36 @@ const CreateTemplateForm = () => {
             />
 
             <FormField
-              name={"subject"}
+              name="subject"
               control={emailTemplateFormData.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subject</FormLabel>
+                  <FormLabel className="text-xs font-medium text-gray-600 dark:text-gray-400">Subject</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         {...field}
                         ref={subjectRef}
-                        placeholder="e.g. Welcome to our platform!"
+                        placeholder="e.g. Opportunity at {{companyName}}"
+                        className="bg-white/50 dark:bg-white/[0.04] border-white/70 dark:border-white/[0.08] text-sm"
                         onChange={(e) => {
                           field.onChange(e.target.value);
                           handleInputChange(e, "subject");
                         }}
-                        required
                       />
                       {showPlaceholders && placeholderField === "subject" && (
-                        <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
-                          <div className="p-2 text-xs font-semibold border-b">
-                            Select a placeholder:
+                        <div className="absolute z-50 top-full mt-1 w-full max-h-52 overflow-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-white/70 dark:border-white/[0.1] rounded-xl shadow-xl shadow-black/10 dark:shadow-black/30">
+                          <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600 border-b border-gray-100/60 dark:border-white/[0.06]">
+                            Select placeholder
                           </div>
                           <div className="p-1">
-                            {placeholders.map((placeholder, index) => (
+                            {placeholders.map((p, i) => (
                               <div
-                                key={index}
-                                className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  handleSelectPlaceholder(placeholder);
-                                }}
+                                key={i}
+                                className="px-3 py-1.5 text-sm rounded-lg text-gray-700 dark:text-gray-300 hover:bg-violet-500/10 dark:hover:bg-violet-400/10 hover:text-violet-700 dark:hover:text-violet-300 cursor-pointer transition-colors"
+                                onMouseDown={(e) => { e.preventDefault(); handleSelectPlaceholder(p); }}
                               >
-                                {placeholder}
+                                {p}
                               </div>
                             ))}
                           </div>
@@ -186,59 +153,49 @@ const CreateTemplateForm = () => {
             />
 
             <FormField
-              name={"body"}
+              name="body"
               control={emailTemplateFormData.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Body</FormLabel>
-                  <div className="text-xs text-muted-foreground mb-1">
-                    type something like &#123;&#123;firstName&#125;&#125; to see
-                    available placeholders
-                  </div>
+                  <FormLabel className="text-xs font-medium text-gray-600 dark:text-gray-400">Body</FormLabel>
+                  <p className="text-xs text-gray-400 dark:text-gray-600 -mt-1">
+                    Type <code className="bg-gray-100 dark:bg-white/[0.06] px-1 rounded text-[10px]">&#123;&#123;</code> to insert a placeholder
+                  </p>
                   <FormControl>
                     <div className="relative">
                       <Tabs defaultValue="body">
-                        <TabsList>
-                          <TabsTrigger value="body">Body</TabsTrigger>
-                          <TabsTrigger value="preview">Preview</TabsTrigger>
+                        <TabsList className="bg-white/50 dark:bg-white/[0.04] border border-white/60 dark:border-white/[0.08] rounded-xl p-1 h-auto mb-2">
+                          <TabsTrigger value="body" className="rounded-lg text-xs data-[state=active]:bg-violet-500/90 data-[state=active]:text-white data-[state=active]:shadow-sm py-1">
+                            Write
+                          </TabsTrigger>
+                          <TabsTrigger value="preview" className="rounded-lg text-xs data-[state=active]:bg-violet-500/90 data-[state=active]:text-white data-[state=active]:shadow-sm py-1">
+                            Preview
+                          </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="body">
                           <Textarea
                             {...field}
                             ref={bodyRef}
-                            placeholder="Dear {{firstName}},&#10;&#10;Welcome to our platform..."
-                            onChange={(e) => {
-                              field.onChange(e.target.value);
-                              handleInputChange(e, "body");
-                            }}
-                            className="min-h-[200px]"
-                            required
+                            placeholder={"Dear {{firstName}},\n\nI wanted to reach out..."}
+                            onChange={(e) => { field.onChange(e.target.value); handleInputChange(e, "body"); }}
+                            className="min-h-[180px] bg-white/50 dark:bg-white/[0.04] border-white/70 dark:border-white/[0.08] text-sm resize-none"
                           />
                         </TabsContent>
 
                         <TabsContent value="preview">
-                          <div
-                            className={"w-full border rounded-lg p-4 space-y-4"}
-                          >
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium">
-                                Subject:
-                              </Label>
-                              <div className="text-base pl-2 border-l-2 text-sm">
-                                {emailTemplateFormData.getValues("subject")}
+                          <div className="rounded-xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] p-4 space-y-3 min-h-[180px]">
+                            <div className="space-y-1">
+                              <Label className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Subject</Label>
+                              <div className="text-sm pl-3 border-l-2 border-violet-400/40 text-gray-700 dark:text-gray-300">
+                                {emailTemplateFormData.getValues("subject") || <span className="text-gray-300 dark:text-gray-700">No subject</span>}
                               </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium">
-                                Body:
-                              </Label>
+                            <div className="space-y-1">
+                              <Label className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600">Body</Label>
                               <div
-                                className="prose max-w-none pl-2 border-l-2 max-h-48 text-sm invisible-scrollbar overflow-y-scroll"
-                                dangerouslySetInnerHTML={{
-                                  __html:
-                                    emailTemplateFormData.getValues("body"),
-                                }}
+                                className="prose prose-sm max-w-none pl-3 border-l-2 border-violet-400/40 max-h-40 text-sm invisible-scrollbar overflow-y-auto text-gray-700 dark:text-gray-300"
+                                dangerouslySetInnerHTML={{ __html: emailTemplateFormData.getValues("body") }}
                               />
                             </div>
                           </div>
@@ -246,21 +203,18 @@ const CreateTemplateForm = () => {
                       </Tabs>
 
                       {showPlaceholders && placeholderField === "body" && (
-                        <div className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-popover border border-border rounded-md shadow-md">
-                          <div className="p-2 text-xs font-semibold border-b">
-                            Select a placeholder:
+                        <div className="absolute z-50 top-full mt-1 w-full max-h-52 overflow-auto bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-white/70 dark:border-white/[0.1] rounded-xl shadow-xl shadow-black/10 dark:shadow-black/30">
+                          <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-600 border-b border-gray-100/60 dark:border-white/[0.06]">
+                            Select placeholder
                           </div>
                           <div className="p-1">
-                            {placeholders.map((placeholder, index) => (
+                            {placeholders.map((p, i) => (
                               <div
-                                key={index}
-                                className="px-2 py-1.5 text-sm rounded-sm hover:bg-accent cursor-pointer"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  handleSelectPlaceholder(placeholder);
-                                }}
+                                key={i}
+                                className="px-3 py-1.5 text-sm rounded-lg text-gray-700 dark:text-gray-300 hover:bg-violet-500/10 dark:hover:bg-violet-400/10 hover:text-violet-700 dark:hover:text-violet-300 cursor-pointer transition-colors"
+                                onMouseDown={(e) => { e.preventDefault(); handleSelectPlaceholder(p); }}
                               >
-                                {placeholder}
+                                {p}
                               </div>
                             ))}
                           </div>
@@ -272,33 +226,32 @@ const CreateTemplateForm = () => {
                 </FormItem>
               )}
             />
-          </CardContent>
+          </div>
 
-          <CardFooter className="flex justify-between">
-            <Button type="button" variant="outline" onClick={resetAddForm}>
-              <X className="h-4 w-4 mr-2" />
-              Clear
-            </Button>
+          {/* Footer */}
+          <div className="px-5 py-4 border-t border-gray-100/60 dark:border-white/[0.06] flex justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => emailTemplateFormData.reset()}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all"
+            >
+              <X className="h-3.5 w-3.5" /> Clear
+            </button>
             <Button
               type="submit"
               disabled={requestCreateEmailTemplate.isPending}
+              className="bg-violet-500/90 hover:bg-violet-600/90 dark:bg-violet-500/25 dark:hover:bg-violet-500/35 dark:text-violet-300 text-white border border-violet-400/30 dark:border-violet-400/20 shadow-md shadow-violet-500/10 text-sm"
             >
               {requestCreateEmailTemplate.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Adding Template
-                </>
+                <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Saving...</>
               ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Template
-                </>
+                <><Plus className="h-3.5 w-3.5 mr-1.5" /> Add Template</>
               )}
             </Button>
-          </CardFooter>
+          </div>
         </form>
       </Form>
-    </Card>
+    </div>
   );
 };
 

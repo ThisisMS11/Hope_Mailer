@@ -13,28 +13,28 @@ const features = [
     icon: User,
     title: "Contact Management",
     description:
-      "Organize your contacts with rich profiles, company associations, and smart filtering by role or position type.",
+      "Organise everyone you reach out to — with rich profiles, company associations, and smart filters.",
     color: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
   },
   {
     icon: BookDashed,
-    title: "Email Templates",
+    title: "Smart Templates",
     description:
-      "Build reusable templates with dynamic placeholders like {{firstName}}, {{companyName}}, and custom link fields.",
+      "Write once, personalise forever. Dynamic placeholders like {{firstName}} and {{companyName}} fill themselves in.",
     color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
   },
   {
     icon: Mail,
-    title: "Scheduled Campaigns",
+    title: "Cold Email Campaigns",
     description:
-      "Compose personalized emails, pick your recipients, and schedule delivery down to the minute.",
+      "Compose, schedule, and send personalised cold emails to the right people at the right time.",
     color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
   },
   {
     icon: File,
-    title: "File Attachments",
+    title: "File Library",
     description:
-      "Upload resumes, cover letters, and documents once — attach them to any email campaign effortlessly.",
+      "Upload resumes, cover letters, and documents once — attach them to any campaign in seconds.",
     color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
 ];
@@ -42,26 +42,26 @@ const features = [
 const steps = [
   {
     step: "01",
-    title: "Add Your Contacts",
+    title: "Add Your People",
     description:
-      "Import or manually add contacts with their details, company info, and professional profiles.",
+      "Import or add contacts with their details, company info, and professional profiles.",
   },
   {
     step: "02",
-    title: "Create a Template",
+    title: "Build a Template",
     description:
-      "Write your email once using dynamic placeholders that auto-fill per recipient.",
+      "Write your message once with dynamic placeholders that auto-fill per recipient.",
   },
   {
     step: "03",
-    title: "Send & Track",
+    title: "Send & Move On",
     description:
-      "Select recipients, schedule your campaign, and monitor delivery through email records.",
+      "Schedule your campaign, hit send, and let Syncmate handle the rest while you focus on what matters.",
   },
 ];
 
 const highlights = [
-  "Personalized emails at scale",
+  "Personalised emails at scale",
   "Dynamic placeholder system",
   "Schedule for any date & time",
   "Attach files from your library",
@@ -79,7 +79,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
               <Mail className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-lg tracking-tight">HopeMailer</span>
+            <span className="font-bold text-lg tracking-tight">Syncmate</span>
           </div>
           <div className="flex items-center gap-4">
             <Link
@@ -106,20 +106,18 @@ export default function LandingPage() {
         <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-20 text-center">
           <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-medium px-3 py-1.5 rounded-full mb-8">
             <Mail className="w-3 h-3" />
-            Outreach made simple
+            Your life, synced.
           </div>
 
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-            Mail like a pro,{" "}
+            The mate that makes{" "}
             <span className="text-violet-600 dark:text-violet-400">
-              every time.
+              life simpler.
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            HopeMailer is your all-in-one email outreach CRM. Manage contacts,
-            build templates, and send personalized campaigns — all from one
-            clean dashboard.
+            Syncmate is your all-in-one productivity companion. Starting with cold email outreach — manage contacts, build templates, and send personalised campaigns — with more sync features on the way.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -127,7 +125,7 @@ export default function LandingPage() {
               href="/auth"
               className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-lg shadow-violet-200 dark:shadow-violet-900/30"
             >
-              Start for free <ChevronRight className="w-4 h-4" />
+              Start syncing <ChevronRight className="w-4 h-4" />
             </Link>
             <Link
               href="/dashboard"
@@ -143,11 +141,10 @@ export default function LandingPage() {
       <section className="max-w-6xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Everything you need for outreach
+            Everything you need, right now
           </h2>
           <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">
-            From managing contacts to scheduling campaigns — HopeMailer covers
-            the full email outreach workflow.
+            Syncmate starts with cold email outreach — the tools you need to reach the right people, faster.
           </p>
         </div>
 
@@ -177,7 +174,7 @@ export default function LandingPage() {
               How it works
             </h2>
             <p className="text-gray-500 dark:text-gray-400">
-              Get from zero to personalized campaign in three steps.
+              From zero to a personalised campaign in three simple steps.
             </p>
           </div>
 
@@ -207,12 +204,10 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Built for focused outreach
+              Built to get out of your way
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-10 leading-relaxed">
-              No bloat, no complexity. HopeMailer keeps the focus on what
-              matters — getting your emails in front of the right people, with
-              the right message.
+              No bloat, no complexity. Syncmate handles the repetitive parts of outreach so you can spend your time on things that actually move the needle.
             </p>
             <ul className="space-y-3">
               {highlights.map((item) => (
@@ -248,10 +243,10 @@ export default function LandingPage() {
       <section className="bg-violet-600 dark:bg-violet-700">
         <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to start mailing?
+            Ready to sync your life?
           </h2>
           <p className="text-violet-200 mb-10 text-lg">
-            Sign in and launch your first campaign in minutes.
+            Sign in and launch your first campaign in minutes. More features coming soon.
           </p>
           <Link
             href="/auth"
@@ -269,10 +264,10 @@ export default function LandingPage() {
             <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center">
               <Mail className="w-3 h-3 text-white" />
             </div>
-            <span className="font-semibold text-sm">HopeMailer</span>
+            <span className="font-semibold text-sm">Syncmate</span>
           </div>
           <p className="text-xs text-gray-400 dark:text-gray-600">
-            &copy; {new Date().getFullYear()} HopeMailer. All rights reserved.
+            &copy; {new Date().getFullYear()} Syncmate. Your mate for a simpler life.
           </p>
           <Link
             href="/auth"

@@ -80,9 +80,9 @@ const TemplatesPanel = () => {
 
   return (
     <div>
-      {/* heading - fixed height */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Email Templates</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Email Templates</h1>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Create and manage reusable email templates with dynamic placeholders.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

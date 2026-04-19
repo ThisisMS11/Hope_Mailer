@@ -24,8 +24,8 @@ const fontOpenSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "HopeMailer",
-  description: "Mail like a pro",
+  title: "Syncmate",
+  description: "Your mate for a simpler, faster life.",
 };
 
 export default function RootLayout({
