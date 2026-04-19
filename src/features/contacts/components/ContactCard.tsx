@@ -91,7 +91,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   }, [requestUpdateContact.isSuccess, requestDeleteContact.isSuccess]);
 
   return (
-    <div className="relative w-64 rounded-2xl shadow-md p-4 pt-6 flex flex-col items-center bg-white dark:bg-[#16151c]">
+    <div className="relative w-64 rounded-2xl p-4 pt-6 flex flex-col items-center bg-white/60 backdrop-blur-md border border-white/80 shadow-xl shadow-black/[0.07] dark:bg-white/[0.04] dark:border-white/[0.08] dark:shadow-black/30 transition-all duration-200 hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-black/40 hover:-translate-y-0.5">
       {/* Checkbox - Top Left */}
       <label className="absolute top-3 left-3 w-4 h-4 inline-flex items-start">
         <input
@@ -176,7 +176,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           </div>
         )}
         {/* Company logo — bottom-left badge */}
-        <div className="absolute -bottom-1 -left-1 w-7 h-7 rounded-full border-2 border-white dark:border-[#16151c] bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+        <div className="absolute -bottom-1 -left-1 w-7 h-7 rounded-full border-2 border-white/80 dark:border-white/10 bg-white/80 dark:bg-white/[0.06] backdrop-blur-sm flex items-center justify-center overflow-hidden">
           {contact.logo ? (
             <Image
               src={contact.logo}
@@ -192,7 +192,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           )}
         </div>
         {/* Online dot — bottom-right */}
-        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-[#16151c]"></span>
+        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white/80 dark:border-white/10"></span>
       </div>
 
       {/* Name and Email */}

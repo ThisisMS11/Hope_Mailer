@@ -134,6 +134,23 @@
   }
 }
 
+/* Glass sidebar */
+[data-sidebar="sidebar"] {
+  background: rgba(245, 246, 255, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: 4px 0 24px rgba(100, 80, 200, 0.06) !important;
+}
+
+.dark [data-sidebar="sidebar"] {
+  background: rgba(4, 4, 10, 0.5) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3) !important;
+}
+
 /* Transparent scrollbar */
 .scrollbar-transparent::-webkit-scrollbar {
   width: 6px;

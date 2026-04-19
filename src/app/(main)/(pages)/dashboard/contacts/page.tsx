@@ -127,7 +127,7 @@ const ContactsPage = () => {
 
       {/* Email composition panel - right side */}
       {isEmailPanelOpen && (
-        <section className="w-[35%] overflow-y-auto border-l border-gray-200 bg-white dark:bg-gray-800 p-4 flex flex-col invisible-scrollbar">
+        <section className="w-[35%] overflow-y-auto border-l border-white/60 dark:border-white/[0.07] bg-white/40 dark:bg-white/[0.03] backdrop-blur-md p-4 flex flex-col invisible-scrollbar">
           <EmailComposer
             checkedContacts={checkedContacts}
             selectedContactsInfo={selectedContactsInfo}

@@ -4,7 +4,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -13,10 +12,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  ChevronDown,
   ChevronUp,
   Mail,
-  Plus,
   User,
   BookDashed,
   File,
@@ -27,16 +24,35 @@ import {
   DropdownMenuTrigger,
 } from "@/imports/Shadcn_imports";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
 import { useAuth } from "@/features/authentication/hooks/useAuth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const projects = [
+const navGroups = [
   {
-    name: "Contacts",
-    icon: User,
-    href: "/dashboard/contacts",
+    label: "Overview",
+    items: [
+      { name: "Dashboard", icon: Mail, href: "/dashboard" },
+    ],
+  },
+  {
+    label: "Contacts",
+    items: [
+      { name: "Contacts", icon: User, href: "/dashboard/contacts" },
+    ],
+  },
+  {
+    label: "Email",
+    items: [
+      { name: "Email Records", icon: Mail, href: "/dashboard/emails/records" },
+      { name: "Templates", icon: BookDashed, href: "/dashboard/emails/templates" },
+    ],
+  },
+  {
+    label: "Files",
+    items: [
+      { name: "Files", icon: File, href: "/dashboard/files" },
+    ],
   },
 ];
 
@@ -44,146 +60,86 @@ export default function CRMSidebar() {
   const { user, requestLogout } = useAuth();
   const pathname = usePathname();
 
+  const isActive = (href: string) =>
+    href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+
   return (
     <Sidebar>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <Image
-                    src="/logo.png"
-                    alt="Logo not found"
-                    width={200}
-                    height={0}
-                    className=" h-auto w-auto max-w-full "
-                  />
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Mohit Saini</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      {/* Header */}
+      <SidebarHeader className="px-4 py-4 border-b border-white/50 dark:border-white/[0.06]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/30">
+            <Mail className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="font-bold text-sm tracking-tight text-gray-800 dark:text-gray-100">
+            HopeMailer
+          </span>
+        </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className={"font-open-sans"}>
-            Contacts
-          </SidebarGroupLabel>
-          <SidebarGroupAction title="Add Project">
-            <Plus /> <span className="sr-only">Add Project</span>
-          </SidebarGroupAction>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {projects.map((project) => (
-                <SidebarMenuItem key={project.name} className="border-b-1">
-                  <SidebarMenuButton asChild>
-                    <Link
-                      href={project.href}
-                      className={
-                        pathname === project.href
-                          ? "bg-muted text-primary font-medium rounded-md"
-                          : ""
-                      }
-                    >
-                      <project.icon className="h-4 w-4 mr-2" />
-                      <span>{project.name}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Email</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem className="border-b-1">
-                <SidebarMenuButton asChild>
-                  <Link
-                    href="/dashboard/emails/records"
-                    className={
-                      pathname === "/dashboard/emails"
-                        ? "bg-muted text-primary font-medium rounded-md"
-                        : ""
-                    }
-                  >
-                    <Mail className="h-4 w-4 mr-2" />
-                    <span>Email Records</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem className="border-b-1">
-                <SidebarMenuButton asChild>
-                  <Link
-                    href="/dashboard/emails/templates"
-                    className={
-                      pathname === "/dashboard/emails/templates"
-                        ? "bg-muted text-primary font-medium rounded-md"
-                        : ""
-                    }
-                  >
-                    <BookDashed className="h-4 w-4 mr-2" />
-                    <span>Templates</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Files</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem className="border-b-1">
-                <SidebarMenuButton asChild>
-                  <Link
-                    href="/dashboard/files"
-                    className={
-                      pathname === "/dashboard/files"
-                        ? "bg-muted text-primary font-medium rounded-md"
-                        : ""
-                    }
-                  >
-                    <File className="h-4 w-4 mr-2" />
-                    <span>Files</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      {/* Nav */}
+      <SidebarContent className="px-2 py-3 gap-1">
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label} className="p-0 mb-3">
+            <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-600 px-2 mb-1">
+              {group.label}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        href={item.href}
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
+                          isActive(item.href)
+                            ? "bg-violet-500/15 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300 shadow-sm"
+                            : "text-gray-600 dark:text-gray-400 hover:bg-white/60 dark:hover:bg-white/[0.05] hover:text-gray-900 dark:hover:text-gray-200"
+                        }`}
+                      >
+                        <item.icon
+                          className={`h-4 w-4 shrink-0 ${
+                            isActive(item.href)
+                              ? "text-violet-600 dark:text-violet-400"
+                              : "text-gray-400 dark:text-gray-500"
+                          }`}
+                        />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
-      <SidebarFooter>
+      {/* Footer */}
+      <SidebarFooter className="px-2 py-3 border-t border-white/50 dark:border-white/[0.06]">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User /> {user ? user?.username : "N/A"}
-                  <ChevronUp className="ml-auto" />
+                <SidebarMenuButton className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/60 dark:hover:bg-white/[0.05] transition-all">
+                  <div className="w-7 h-7 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center shrink-0">
+                    <User className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate flex-1">
+                    {user?.username ?? "N/A"}
+                  </span>
+                  <ChevronUp className="w-3.5 h-3.5 text-gray-400 dark:text-gray-600 shrink-0" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="top"
-                className="w-[--radix-popper-anchor-width]"
+                className="w-[--radix-popper-anchor-width] bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border border-white/60 dark:border-white/[0.08]"
               >
-                {/*<DropdownMenuItem>*/}
-                {/*  <span>Account</span>*/}
-                {/*</DropdownMenuItem>*/}
-                <DropdownMenuItem onClick={requestLogout.mutate as () => void}>
-                  <span>Sign out</span>
+                <DropdownMenuItem
+                  onClick={requestLogout.mutate as () => void}
+                  className="text-sm text-red-500 dark:text-red-400 cursor-pointer"
+                >
+                  Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

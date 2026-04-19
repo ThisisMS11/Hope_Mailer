@@ -32,7 +32,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   const [view, setView] = useState<"grid" | "list">("grid");
 
   return (
-    <div className="flex items-center justify-between gap-3 bg-white dark:bg-secondary p-3 rounded-2xl shadow-sm w-full">
+    <div className="flex items-center justify-between gap-3 bg-white/50 backdrop-blur-md border border-white/70 dark:bg-white/[0.04] dark:border-white/[0.08] shadow-lg shadow-black/[0.06] dark:shadow-black/20 p-3 rounded-2xl w-full">
       <MultiSelect
         filterName={FilterTypeEnum.POSITION_TYPE}
         options={positionType}
@@ -51,7 +51,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
           <Button
             variant="outline"
             size="sm"
-            className="h-10 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 border"
+            className="h-10 rounded-lg bg-white/50 hover:bg-white/80 border border-white/70 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/[0.1] dark:text-gray-300 backdrop-blur-sm shadow-sm"
           >
             <Funnel />
             <ChevronDown className="w-4 h-4 ml-1 opacity-60" />
@@ -64,12 +64,16 @@ const FilterBox: React.FC<FilterBoxProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Button onClick={applyFilters}> Apply Filters </Button>
+      <Button
+        onClick={applyFilters}
+        className="bg-violet-500/90 hover:bg-violet-600/90 text-white border border-violet-400/30 backdrop-blur-sm shadow-md shadow-violet-500/20 dark:bg-violet-500/25 dark:hover:bg-violet-500/35 dark:border-violet-400/20 dark:shadow-violet-500/10"
+      >
+        Apply Filters
+      </Button>
 
       <Button
         onClick={() => setIsCreateModalOpen(true)}
-        variant="default"
-        className="ml-auto"
+        className="ml-auto bg-violet-500/90 hover:bg-violet-600/90 text-white border border-violet-400/30 backdrop-blur-sm shadow-md shadow-violet-500/20 dark:bg-violet-500/25 dark:hover:bg-violet-500/35 dark:border-violet-400/20 dark:shadow-violet-500/10"
       >
         Add Contact
       </Button>
@@ -78,8 +82,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
       {checkedContacts.length > 0 && (
         <Button
           onClick={startMailing}
-          variant="default"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 bg-violet-500/90 hover:bg-violet-600/90 text-white border border-violet-400/30 backdrop-blur-sm shadow-md shadow-violet-500/20 dark:bg-violet-500/25 dark:hover:bg-violet-500/35 dark:border-violet-400/20 dark:shadow-violet-500/10"
         >
           <Mail className="h-4 w-4" />
           Compose Email ({checkedContacts.length})
@@ -93,24 +96,32 @@ const FilterBox: React.FC<FilterBoxProps> = ({
       <Button
         variant="ghost"
         size="sm"
-        className="h-10 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 border"
+        className="h-10 px-3 rounded-lg bg-white/50 hover:bg-white/80 border border-white/70 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/[0.1] dark:text-gray-300 backdrop-blur-sm shadow-sm"
       >
         All
       </Button>
 
       {/* View Toggle */}
       <Button
-        variant={view === "grid" ? "default" : "ghost"}
+        variant="ghost"
         size="sm"
-        className="h-10 p-2 rounded-lg border"
+        className={`h-10 p-2 rounded-lg border backdrop-blur-sm shadow-sm transition-all ${
+          view === "grid"
+            ? "bg-violet-500/90 text-white border-violet-400/30 dark:bg-violet-500/25 dark:border-violet-400/20"
+            : "bg-white/50 hover:bg-white/80 border-white/70 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/[0.1] dark:text-gray-300"
+        }`}
         onClick={() => setView("grid")}
       >
         <LayoutGrid className="w-5 h-5" />
       </Button>
       <Button
-        variant={view === "list" ? "default" : "ghost"}
+        variant="ghost"
         size="sm"
-        className="h-10 p-2 rounded-lg border"
+        className={`h-10 p-2 rounded-lg border backdrop-blur-sm shadow-sm transition-all ${
+          view === "list"
+            ? "bg-violet-500/90 text-white border-violet-400/30 dark:bg-violet-500/25 dark:border-violet-400/20"
+            : "bg-white/50 hover:bg-white/80 border-white/70 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/[0.1] dark:text-gray-300"
+        }`}
         onClick={() => setView("list")}
       >
         <List className="w-5 h-5" />
